@@ -161,6 +161,7 @@ namespace WebApiNew.Model
         }
         public string GetempName(string empid)
         {
+
             string empname = string.Empty;
             SqlCommand cmd = PmConnections.ModCmd();
             cmd.CommandText = "select empName from wapEmpList where empID = '" + empid + "'";
@@ -271,7 +272,8 @@ namespace WebApiNew.Model
                     {
                         if (item == "ADMIN")
                         {
-                            continue;
+                            PMUser.FunctionList.Add("datacenter");
+                            break;
                         }
                         else if (item == "CFM")
                         {

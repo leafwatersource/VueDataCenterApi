@@ -11,6 +11,7 @@ using static WebApiNew.StaticFunc.UserManage;
 namespace WebApiNew.Middle
 {
     // You may need to install the Microsoft.AspNetCore.Http.Abstractions package into your project
+    //这个插件是判断用户是否是登录的状态，如果不是登录的状态就返回301，必须存有缓存的用户
     public class HasLoginMiddleware
     {
         private readonly RequestDelegate _next;

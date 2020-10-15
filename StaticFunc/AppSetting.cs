@@ -9,5 +9,6 @@ namespace WebApiNew.StaticFunc
     public class AppSetting
     {
         public static JObject TableFileds { get; set; }
+        public static string BasePath { get; set; }
     }
 }

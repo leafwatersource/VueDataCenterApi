@@ -22,11 +22,30 @@ namespace WebApiNew.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        public IActionResult Result([FromForm]string PageSize,[FromForm]string CurPage,[FromForm]string filter)
+        public IActionResult Result([FromForm]string PageSize,[FromForm]string CurPage,[FromForm]string filter,[FromForm]string fuzzyFilter)
         {
             MdataCenter mdataCenter = new MdataCenter();
-            DataTable dt = mdataCenter.WorkOrderData(PageSize,CurPage,filter);
-            int total = mdataCenter.GetOrderCount();
+            DataTable dt = mdataCenter.WorkOrderData(PageSize, CurPage, filter, fuzzyFilter);
+            int total = mdataCenter.GetOrderCount(filter, fuzzyFilter);
+            JObject data = new JObject {
+                { "code", "0"},
+                { "data", JsonConvert.SerializeObject(dt)},
+                {"total", total },
+                { "msg", "successful"}
+            };
+            return Ok(data.ToString());
+        }
+    }
+    [Route("/[controller]")]
+    [ApiController]
+    public class fuzzyFilter : ControllerBase
+    {
+        [HttpPost]
+        public IActionResult Result([FromForm] string PageSize, [FromForm] string CurPage, [FromForm] string filter,[FromForm]string fuzzyStr)
+        {
+            MdataCenter mdataCenter = new MdataCenter();
+            DataTable dt = mdataCenter.WorkOrderData(PageSize, CurPage, filter, fuzzyStr);
+            int total = mdataCenter.GetOrderCount(filter, fuzzyStr);
             JObject data = new JObject {
                 { "code", "0"},
                 { "data", JsonConvert.SerializeObject(dt)},
@@ -80,6 +99,34 @@ namespace WebApiNew.Controllers
             result.Add("OnTimePercentage", mdataCenter.OnTimePercentage);
             result.Add("LatePercentage", mdataCenter.LatePercentage);
             return Ok(result.ToString());
+        }
+    }
+    /// <summary>
+    /// 获取生产订单的设备组
+    /// </summary>
+    [Route("/[controller]")]
+    [ApiController]
+    public class ViewGroup:ControllerBase
+    {
+        [HttpPost]
+        public IActionResult Result()
+        {
+            MdataCenter mdataCenter = new MdataCenter();
+            return Ok(mdataCenter.GetViewGroup());
+        }
+    }
+    /// <summary>
+    /// 获取设备组下的所有设备
+    /// </summary>
+    [Route("/[controller]")]
+    [ApiController]
+    public class ResView : ControllerBase
+    {
+        [HttpPost]
+        public IActionResult Result([FromForm] string optionPlan,[FromForm]string ViewName)
+        {
+            MdataCenter mdataCenter = new MdataCenter();
+            return Ok(mdataCenter.GetResView(optionPlan, ViewName));
         }
     }
 }

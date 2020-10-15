@@ -9,10 +9,18 @@ namespace WebApiNew.StaticFunc
 {
     public class PmConnections
     {
+        /// <summary>
+        /// 三个字段是连接数据
+        /// </summary>
         public static string Modconnstr { get; set; }
         public static string Schconnstr { get; set; }
         public static string Ctrlconnstr { get; set; }
-
+        /// <summary>
+        /// 下面三个静态字段是用于连表查询的，有dbo
+        /// </summary>
+        public static string ModName { get; set; }
+        public static string SchName { get; set; }
+        public static string CtrlName { get; set; }
         public static SqlCommand SchCmd()
         {
             SqlConnection conn = new SqlConnection(Schconnstr);
