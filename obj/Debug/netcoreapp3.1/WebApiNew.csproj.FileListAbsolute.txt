@@ -24,7 +24,6 @@ C:\Users\Mr.Ye\Desktop\WebApiNew\bin\Debug\netcoreapp3.1\runtimes\win-x86\native
 C:\Users\Mr.Ye\Desktop\WebApiNew\bin\Debug\netcoreapp3.1\runtimes\unix\lib\netcoreapp2.1\System.Data.SqlClient.dll
 C:\Users\Mr.Ye\Desktop\WebApiNew\bin\Debug\netcoreapp3.1\runtimes\win\lib\netcoreapp2.1\System.Data.SqlClient.dll
 C:\Users\Mr.Ye\Desktop\WebApiNew\bin\Debug\netcoreapp3.1\runtimes\win\lib\netcoreapp2.0\System.Text.Encoding.CodePages.dll
-C:\Users\Mr.Ye\Desktop\WebApiNew\obj\Debug\netcoreapp3.1\WebApiNew.csprojAssemblyReference.cache
 C:\Users\Mr.Ye\Desktop\WebApiNew\obj\Debug\netcoreapp3.1\WebApiNew.AssemblyInfoInputs.cache
 C:\Users\Mr.Ye\Desktop\WebApiNew\obj\Debug\netcoreapp3.1\WebApiNew.AssemblyInfo.cs
 C:\Users\Mr.Ye\Desktop\WebApiNew\obj\Debug\netcoreapp3.1\WebApiNew.csproj.CoreCompileInputs.cache

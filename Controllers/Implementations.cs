@@ -43,7 +43,7 @@ namespace WebApiNew.Controllers
         public IActionResult Result([FromForm]string resGroup)
         {
             MImplementations mImplementations = new MImplementations();
-            return Ok(mImplementations.GetResView(resGroup));
+            return Ok(mImplementations.GetResView(resGroup).ToString());
         }
     }
     /// <summary>
