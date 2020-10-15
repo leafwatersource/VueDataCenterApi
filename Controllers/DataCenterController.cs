@@ -22,11 +22,11 @@ namespace WebApiNew.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        public IActionResult Result([FromForm]string PageSize,[FromForm]string CurPage,[FromForm]string filter,[FromForm]string fuzzyFilter)
+        public IActionResult Result([FromForm]string PageSize,[FromForm]string CurPage,[FromForm]string filter,[FromForm]string fuzzyFilter,[FromForm]string workType)
         {
             MdataCenter mdataCenter = new MdataCenter();
-            DataTable dt = mdataCenter.WorkOrderData(PageSize, CurPage, filter, fuzzyFilter);
-            int total = mdataCenter.GetOrderCount(filter, fuzzyFilter);
+            DataTable dt = mdataCenter.WorkOrderData(PageSize, CurPage, filter, fuzzyFilter, workType);
+            int total = mdataCenter.GetOrderCount(filter, fuzzyFilter, workType);
             JObject data = new JObject {
                 { "code", "0"},
                 { "data", JsonConvert.SerializeObject(dt)},
@@ -41,11 +41,11 @@ namespace WebApiNew.Controllers
     public class fuzzyFilter : ControllerBase
     {
         [HttpPost]
-        public IActionResult Result([FromForm] string PageSize, [FromForm] string CurPage, [FromForm] string filter,[FromForm]string fuzzyStr)
+        public IActionResult Result([FromForm] string PageSize, [FromForm] string CurPage, [FromForm] string filter,[FromForm]string fuzzyStr,[FromForm]string workType)
         {
             MdataCenter mdataCenter = new MdataCenter();
-            DataTable dt = mdataCenter.WorkOrderData(PageSize, CurPage, filter, fuzzyStr);
-            int total = mdataCenter.GetOrderCount(filter, fuzzyStr);
+            DataTable dt = mdataCenter.WorkOrderData(PageSize, CurPage, filter, fuzzyStr, workType);
+            int total = mdataCenter.GetOrderCount(filter, fuzzyStr, workType);
             JObject data = new JObject {
                 { "code", "0"},
                 { "data", JsonConvert.SerializeObject(dt)},
@@ -99,34 +99,6 @@ namespace WebApiNew.Controllers
             result.Add("OnTimePercentage", mdataCenter.OnTimePercentage);
             result.Add("LatePercentage", mdataCenter.LatePercentage);
             return Ok(result.ToString());
-        }
-    }
-    /// <summary>
-    /// 获取生产订单的设备组
-    /// </summary>
-    [Route("/[controller]")]
-    [ApiController]
-    public class ViewGroup:ControllerBase
-    {
-        [HttpPost]
-        public IActionResult Result()
-        {
-            MdataCenter mdataCenter = new MdataCenter();
-            return Ok(mdataCenter.GetViewGroup());
-        }
-    }
-    /// <summary>
-    /// 获取设备组下的所有设备
-    /// </summary>
-    [Route("/[controller]")]
-    [ApiController]
-    public class ResView : ControllerBase
-    {
-        [HttpPost]
-        public IActionResult Result([FromForm] string optionPlan,[FromForm]string ViewName)
-        {
-            MdataCenter mdataCenter = new MdataCenter();
-            return Ok(mdataCenter.GetResView(optionPlan, ViewName));
         }
     }
 }

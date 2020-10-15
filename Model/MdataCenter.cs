@@ -56,6 +56,9 @@ namespace WebApiNew.Model
             rd.Close();
             cmd.Connection.Dispose();
         }
+        /// <summary>
+        /// 获取百分数
+        /// </summary>
         public void Datacenterorderdelay()
         {
             DataTable table = GetWorkOrder("delayDays", "isScheduleWorkID = '1'", string.Empty);
@@ -129,9 +132,9 @@ namespace WebApiNew.Model
         /// <param name="filter"></param>
         /// <param name="maxUid"></param>
         /// <param name="columns"></param>
-        /// <param name="fuzzyFilter"></param>
+        /// <param name="workType">工单类型</param>
         /// <returns></returns>
-        public static DataTable GetOrder(string pageSize, string filter, int maxUid, string columns)
+        public static DataTable GetOrder(string pageSize, string filter, int maxUid, string columns,string workType)
         {
             DataTable table = new DataTable();
             SqlCommand cmd = PmConnections.SchCmd();
@@ -139,14 +142,33 @@ namespace WebApiNew.Model
             string filterStr = "";
             if (!String.IsNullOrEmpty(filter) && filter != "{}")
             {
-                JObject filters = JObject.Parse(filter);
-                foreach (var item in filters)
-                {
-                    filterStr += " and " + item.Key + "='" + item.Value + "'";
-                }
+                    JObject filters = JObject.Parse(filter);
+                    foreach (var item in filters)
+                    {
+                        filterStr += " and " + item.Key + "='" + item.Value + "'";
+                    }
             }
-           
-          cmd.CommandText += filterStr + " order by UID";
+            if (workType == "EarlyPlan")
+            {
+                //提前的工单
+                filterStr += " and delayDays < '0'";
+            }
+            else if (workType == "OnTimePlan")
+            {
+                //正常的工单
+                filterStr += " and delayDays = '0'";
+            }
+            else if (workType == "LatePlan")
+            {
+                //延迟的工单
+                filterStr += " and delayDays > '0'";
+            }
+            else if (workType == "ErrorPlan")
+            {
+                //异常的订单
+                filterStr += " and planStartTime is null";
+            }
+            cmd.CommandText += filterStr + " order by UID";
             SqlDataAdapter ad = new SqlDataAdapter(cmd);
             ad.Fill(table);
             ad.Dispose();
@@ -157,7 +179,7 @@ namespace WebApiNew.Model
         /// 查询订单列表
         /// </summary>
         /// <returns></returns>
-        public DataTable WorkOrderData(string pageSize, string curPage, string filter, string fuzzyFilter)
+        public DataTable WorkOrderData(string pageSize, string curPage, string filter, string fuzzyFilter,string workType)
         {
             //查看要查询数据库中的哪些列
             JObject SQLWorkOrderFileds = AppSetting.TableFileds.SelectToken("SQLWorkOrderFiled").ToObject<JObject>();
@@ -176,9 +198,9 @@ namespace WebApiNew.Model
             int max = 0;
             if (Convert.ToInt32(curPage) > 1)
             {
-                max = GetMaxUid((Convert.ToInt32(curPage) - 1) * Convert.ToInt32(pageSize));
+                max = GetMaxUid((Convert.ToInt32(curPage) - 1) * Convert.ToInt32(pageSize),workType);
             }
-            DataTable dt = GetOrder(pageSize, filter, max, SQLWorkOrderFiled);
+            DataTable dt = GetOrder(pageSize, filter, max, SQLWorkOrderFiled, workType);
             DataTable AttrTable = GetAttrTable(dt);
             foreach (var item in SQLWorkOrderFileds)
             {
@@ -254,12 +276,33 @@ namespace WebApiNew.Model
         /// </summary>
         /// <param name="end">前几条的数据</param>
         /// <returns></returns>
-        public int GetMaxUid(int end)
+        public int GetMaxUid(int end,string workType)
         {
             DataTable table = new DataTable();
             SqlCommand cmd = PmConnections.SchCmd();
             int max;
-            cmd.CommandText = "select top " + end + " uid from User_WorkOrder where  isScheduleWorkID = '1'  and workPlanID in (SELECT workPlanID FROM PMS_WorkPlans where sysID = '" + PMUser.UserSysID + "' and Status = '" + PMUser.PMOcState + "') order by UID";
+            string filterStr = "";
+            if (workType == "EarlyPlan")
+            {
+                //提前的工单
+                filterStr += " and delayDays < '0'";
+            }
+            else if (workType == "OnTimePlan")
+            {
+                //正常的工单
+                filterStr += " and delayDays = '0'";
+            }
+            else if (workType == "LatePlan")
+            {
+                //延迟的工单
+                filterStr += " and delayDays > '0'";
+            }
+            else if (workType == "ErrorPlan")
+            {
+                //异常的订单
+                filterStr += " and planStartTime is null";
+            }
+            cmd.CommandText = "select top " + end + " uid from User_WorkOrder where  isScheduleWorkID = '1'  and workPlanID in (SELECT workPlanID FROM PMS_WorkPlans where sysID = '" + PMUser.UserSysID + "' and Status = '" + PMUser.PMOcState + "') "+ filterStr + " order by UID";
 
             SqlDataAdapter ad = new SqlDataAdapter(cmd);
             ad.Fill(table);
@@ -272,13 +315,13 @@ namespace WebApiNew.Model
         ///获取表格的总数
         /// </summary>
         /// <returns></returns>
-        public int GetOrderCount(string filter, string fuzzyFilter)
+        public int GetOrderCount(string filter, string fuzzyFilter,string workType)
         {
             int count = 0;
             string filterStr = "";
             string fuzzyFilterText = "";
             SqlCommand cmd = PmConnections.SchCmd();
-            cmd.CommandText = "SELECT count(*) FROM User_WorkOrder where workPlanID in (SELECT workPlanID FROM PMS_WorkPlans where sysID = '" + PMUser.UserSysID + "' and Status = '" + PMUser.PMOcState + "')";
+            cmd.CommandText = "SELECT count(*) FROM User_WorkOrder where  workPlanID in (SELECT workPlanID FROM PMS_WorkPlans where sysID = '" + PMUser.UserSysID + "' and Status = '" + PMUser.PMOcState + "') and isScheduleWorkID = '1'";
             bool aaa = string.IsNullOrEmpty(filter);
             if (!string.IsNullOrEmpty(filter) && filter != "{}" && filter !=null)
             {
@@ -305,151 +348,30 @@ namespace WebApiNew.Model
                 }
                 fuzzyFilterText += ")";
             }
+            if (workType == "EarlyPlan")
+            {
+                //提前的工单
+                filterStr += " and delayDays < '0'";
+            }
+            else if (workType == "OnTimePlan")
+            {
+                //正常的工单
+                filterStr += " and delayDays = '0'";
+            }
+            else if (workType == "LatePlan")
+            {
+                //延迟的工单
+                filterStr += " and delayDays > '0'";
+            }
+            else if (workType == "ErrorPlan")
+            {
+                //异常的订单
+                filterStr += " and planStartTime is null";
+            }
             cmd.CommandText += filterStr+ fuzzyFilterText;
             count = (int)cmd.ExecuteScalar();
             cmd.Connection.Close();
             return count;
-        }
-        
-        /// <summary>
-        /// 获取设备组
-        /// </summary>
-        /// <returns></returns>
-        public string GetViewGroup()
-        {
-            JObject data = new JObject();
-            DataTable groupList = new DataTable();
-            SqlCommand cmd = PmConnections.SchCmd();
-            cmd.CommandText = "SELECT distinct viewname FROM View_PmViewGroup where SYSID ='" + PMUser.UserSysID + "' and vglobal = 'export'";
-            SqlDataAdapter ad = new SqlDataAdapter(cmd);
-            ad.Fill(groupList);
-            if (groupList.Rows.Count == 0)
-            {
-               
-                cmd.CommandText = "SELECT distinct viewname FROM View_PmViewGroup where SYSID ='" + PMUser.UserSysID + "'";
-                ad = new SqlDataAdapter(cmd);
-                ad.Fill(groupList);
-                ad.Dispose();
-                if (groupList.Rows.Count == 0)
-                {
-                    data.Add("groupList", "没有为设备创建视图");
-                    data.Add("listCount", 0);
-                    data.Add("status", 0);
-                }
-                else
-                {
-                    data.Add("groupList", JsonConvert.SerializeObject(groupList));
-                    data.Add("listCount", groupList.Rows.Count);
-                    data.Add("status", 1);
-                }
-            }
-            else
-            {
-                data.Add("groupList", JsonConvert.SerializeObject(groupList));
-                data.Add("listCount", groupList.Rows.Count);
-                data.Add("status", 1);
-            }
-            return data.ToString();
-        }
-        /// <summary>
-        /// 获取设备组下的所有的工单
-        /// </summary>
-        /// <param name="optionPlan">目标设备</param>
-        /// <param name="ViewName">设备名称</param>
-        /// <returns></returns>
-        public string GetResView(string optionPlan, string ViewName)
-        {
-            DataTable table = new DataTable();
-            //查看要查询数据库中的哪些列
-            JObject SQLWorkPlanFileds = AppSetting.TableFileds.SelectToken("SQLWorkPlanFiled").ToObject<JObject>();
-            string SQLWorkPlanFiled = "";
-            foreach (var item in SQLWorkPlanFileds)
-            {
-                if (string.IsNullOrEmpty(SQLWorkPlanFiled))
-                {
-                    SQLWorkPlanFiled += item.Key;
-                }
-                else
-                {
-                    SQLWorkPlanFiled += "," + item.Key;
-                }
-            }
-            if (ViewName == null)
-            {
-                table = GetWorkPlanBars(SQLWorkPlanFiled, "OperationID = '" + optionPlan + "'", string.Empty);
-            }
-            else if (optionPlan == null)
-            {
-                table = GetWorkPlanBars(SQLWorkPlanFiled, "OperationID in ( select resName from View_pmViewGroup where VIewName = '" + ViewName + "')", string.Empty);
-            }
-            foreach (var item in SQLWorkPlanFileds)
-            {
-                table.Columns[item.Key].ColumnName = item.Value.Value<string>();
-            }
-            table.Columns.Add("temp", Type.GetType("System.Decimal"));
-            table.Columns.Add("temp1", Type.GetType("System.Decimal"));
-            for (int i = 0; i < table.Rows.Count; i++)
-            {
-                decimal productTime = Convert.ToDecimal(table.Rows[i][SQLWorkPlanFileds["RealWorkTime"].ToString()]) / 3600;
-                productTime = Math.Round(productTime, 2);
-                table.Rows[i]["temp"] = productTime;
-                decimal setupTime = Convert.ToDecimal(table.Rows[i][SQLWorkPlanFileds["setupTime"].ToString()]) / 60;
-                setupTime = Math.Round(setupTime, 2);
-                table.Rows[i]["temp1"] = setupTime;
-            }
-            table.Columns.Remove(SQLWorkPlanFileds["RealWorkTime"].ToString());
-            table.Columns["temp"].ColumnName = SQLWorkPlanFileds["RealWorkTime"].ToString();
-            table.Columns.Remove(SQLWorkPlanFileds["setupTime"].ToString());
-            table.Columns["temp1"].ColumnName = SQLWorkPlanFileds["setupTime"].ToString();
-            table.AcceptChanges();
-            JObject data = new JObject();
-            data.Add("ImplementationData", JsonConvert.SerializeObject(table));
-            data.Add("ImplementationCount", table.Rows.Count);
-            data.Add("ImplementationStatus", 1);
-            return data.ToString();
-        }
-        /// <summary>
-        /// 获取执行计划的数据
-        /// </summary>
-        /// <param name="colName">列名</param>
-        /// <param name="filter">筛选的条件</param>
-        /// <param name="ordertype">排序</param>
-        /// <returns></returns>
-        public static DataTable GetWorkPlanBars(string colName, string filter, string ordertype)
-        {
-            // colName: colname1,colname2,
-            // filter:colname1 = 'value1',and colname2 = 'value2'
-            // ordertype colname1,colname2 DESC
-            DataTable table = new DataTable();
-            SqlCommand cmd = PmConnections.SchCmd();
-            string cmdselectstring;
-            if (string.IsNullOrEmpty(colName))
-            {
-                cmdselectstring = "SELECT * FROM View_WorkPlansBars";
-            }
-            else
-            {
-                cmdselectstring = "SELECT " + colName + " FROM View_WorkPlansBars";
-            }
-            string cmdfilterstring;
-            if (string.IsNullOrEmpty(filter))
-            {
-                cmdfilterstring = " where WorkPlanID in (select WorkPlanID from PMS_WorkPlans where Status = '" + PMUser.PMPlState + "' and sysid = '" + PMUser.UserSysID + "')";
-            }
-            else
-            {
-                cmdfilterstring = " where " + filter + " and WorkPlanID in (select WorkPlanID from PMS_WorkPlans where Status = '" + PMUser.PMPlState + "' and sysid = '" + PMUser.UserSysID + "')";
-            }
-            cmd.CommandText = cmdselectstring + cmdfilterstring;
-            if (string.IsNullOrEmpty(ordertype) == false)
-            {
-                cmd.CommandText += "order by " + ordertype;
-            }
-            SqlDataAdapter da = new SqlDataAdapter(cmd);
-            da.Fill(table);
-            da.Dispose();
-            cmd.Connection.Dispose();
-            return table;
         }
     }
 }
