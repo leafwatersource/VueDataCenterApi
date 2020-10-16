@@ -31,6 +31,10 @@ namespace WebApiNew.Controllers
     [ApiController]
     public class FunctionList : ControllerBase
     {
+        /// <summary>
+        /// 查看用户的权限
+        /// </summary>
+        /// <returns></returns>
         [HttpPost]
         public IActionResult Result()
         {

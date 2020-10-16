@@ -9,15 +9,16 @@ using WebApiNew.StaticFunc;
 
 namespace WebApiNew.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class PublicController : ControllerBase
-    {
-    }
+ 
     [Route("api/[controller]")]
     [Route("/[controller]")]
     public class TableFiled : ControllerBase
     {
+        /// <summary>
+        /// 获取表格的列
+        /// </summary>
+        /// <param name="tableName">表格的名称（WorkOrder：订单列表，WorkPlan：计划，History：历史数据）</param>
+        /// <returns></returns>
         [HttpPost]
         public IActionResult Result([FromForm] string tableName)
         {

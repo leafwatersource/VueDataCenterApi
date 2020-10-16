@@ -60,8 +60,13 @@ namespace WebApiNew.Model
         /// <param name="optionPlan">目标设备</param>
         /// <param name="ViewName">设备名称</param>
         /// <returns></returns>
-        public string GetResPlan(string optionPlan, string ViewName)
+        public string GetResPlan(string PageSize, string CurPage,string Resource, string ViewName)
         {
+            int max = 0;
+            if (Convert.ToInt32(CurPage) > 1)
+            {
+                max = MaxBarID((Convert.ToInt32(CurPage) - 1) * Convert.ToInt32(PageSize), Resource);
+            }
             DataTable table = new DataTable();
             //查看要查询数据库中的哪些列
             JObject SQLWorkPlanFileds = AppSetting.TableFileds.SelectToken("SQLWorkPlanFiled").ToObject<JObject>();
@@ -79,11 +84,11 @@ namespace WebApiNew.Model
             }
             if (ViewName == null)
             {
-                table = GetWorkPlanBars(SQLWorkPlanFiled, "OperationID = '" + optionPlan + "'", string.Empty);
+                table = GetWorkPlanBars(PageSize,SQLWorkPlanFiled, " OperationID = '" + Resource + "' and BarID>'" + max + "'");
             }
-            else if (optionPlan == null)
+            else if (Resource == null)
             {
-                table = GetWorkPlanBars(SQLWorkPlanFiled, "OperationID in ( select resName from View_pmViewGroup where VIewName = '" + ViewName + "')", string.Empty);
+                table = GetWorkPlanBars(PageSize,SQLWorkPlanFiled, " OperationID in ( select resName from View_pmViewGroup where VIewName = '" + ViewName + "') and BarID>'"+max+"'");
             }
             foreach (var item in SQLWorkPlanFileds)
             {
@@ -107,7 +112,7 @@ namespace WebApiNew.Model
             table.AcceptChanges();
             JObject data = new JObject();
             data.Add("ImplementationData", JsonConvert.SerializeObject(table));
-            data.Add("ImplementationCount", table.Rows.Count);
+            data.Add("ImplementationCount", ResWorkCount(Resource));
             data.Add("ImplementationStatus", 1);
             return data.ToString();
         }
@@ -118,7 +123,7 @@ namespace WebApiNew.Model
         /// <param name="filter">筛选的条件</param>
         /// <param name="ordertype">排序</param>
         /// <returns></returns>
-        public static DataTable GetWorkPlanBars(string colName, string filter, string ordertype)
+        public static DataTable GetWorkPlanBars(string PageSize,string colName, string filter)
         {
             // colName: colname1,colname2,
             // filter:colname1 = 'value1',and colname2 = 'value2'
@@ -132,7 +137,7 @@ namespace WebApiNew.Model
             }
             else
             {
-                cmdselectstring = "SELECT " + colName + " FROM View_WorkPlansBars";
+                cmdselectstring = "SELECT top "+ PageSize + colName + " FROM View_WorkPlansBars";
             }
             string cmdfilterstring;
             if (string.IsNullOrEmpty(filter))
@@ -143,11 +148,7 @@ namespace WebApiNew.Model
             {
                 cmdfilterstring = " where " + filter + " and WorkPlanID in (select WorkPlanID from PMS_WorkPlans where Status = '" + PMUser.PMPlState + "' and sysid = '" + PMUser.UserSysID + "')";
             }
-            cmd.CommandText = cmdselectstring + cmdfilterstring;
-            if (string.IsNullOrEmpty(ordertype) == false)
-            {
-                cmd.CommandText += "order by " + ordertype;
-            }
+            cmd.CommandText = cmdselectstring + cmdfilterstring+ "order by BarID";
             SqlDataAdapter da = new SqlDataAdapter(cmd);
             da.Fill(table);
             da.Dispose();
@@ -177,6 +178,32 @@ namespace WebApiNew.Model
                 data.Add("resView", JsonConvert.SerializeObject(table));
                 data.Add("resStatus", 1);
             }
+            return data;
+        }
+        public int MaxBarID(int end,string resource)
+        {
+            DataTable table = new DataTable();
+            SqlCommand cmd = PmConnections.SchCmd();
+            cmd.CommandText = "select top " + end + " BarID from View_WorkPlansBars where OperationID = '"+ resource + "' and WorkPlanID in (select WorkPlanID from PMS_WorkPlans where Status = 'Released' and sysid = '"+PMUser.UserSysID+"') order by BarID";
+            SqlDataAdapter ad = new SqlDataAdapter(cmd);
+            ad.Fill(table);
+            ad.Dispose();
+            cmd.Connection.Close();
+            return Convert.ToInt32(table.Rows[table.Rows.Count-1][0]);
+        }
+        public int ResWorkCount(string resource)
+        {
+            int count = 0;
+            SqlCommand cmd = PmConnections.SchCmd();
+            cmd.CommandText = "select count(WIPID) from View_WorkPlansBars where  OperationID = '"+ resource + "' and WorkPlanID in (select WorkPlanID from PMS_WorkPlans where Status = 'Released' and sysid = '" + PMUser.UserSysID + "')";
+            count = (int)cmd.ExecuteScalar();
+            cmd.Connection.Close();
+            return count;
+        }
+        public JObject GetAllRes()
+        {
+            JObject data = new JObject();
+            SqlCommand cmd = PmConnections.SchCmd();
             return data;
         }
     }

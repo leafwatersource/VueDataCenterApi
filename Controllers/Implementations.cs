@@ -54,10 +54,25 @@ namespace WebApiNew.Controllers
     public class ResWorkView : ControllerBase
     {
         [HttpPost]
-        public IActionResult Result([FromForm] string optionPlan, [FromForm] string ViewName)
+        public IActionResult Result([FromForm] string PageSize, [FromForm] string CurPage, [FromForm] string Resource, [FromForm] string ViewName)
         {
             MImplementations mImplementations = new MImplementations();
-            return Ok(mImplementations.GetResPlan(optionPlan, ViewName));
+            return Ok(mImplementations.GetResPlan(PageSize,CurPage,Resource, ViewName));
+        }
+    }
+    [Route("/[controller]")]
+    [ApiController]
+    public class AllResView : ControllerBase
+    {
+        /// <summary>
+        /// 获取设备组下的所有设备的工单
+        /// </summary>
+        /// <param name="ResGroup">设备组的名称</param>
+        /// <returns></returns>
+        [HttpPost]
+        public IActionResult Result([FromForm]string ResGroup)
+        {
+            return Ok("111");
         }
     }
 }
