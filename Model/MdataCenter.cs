@@ -322,7 +322,6 @@ namespace WebApiNew.Model
             string fuzzyFilterText = "";
             SqlCommand cmd = PmConnections.SchCmd();
             cmd.CommandText = "SELECT count(*) FROM User_WorkOrder where  workPlanID in (SELECT workPlanID FROM PMS_WorkPlans where sysID = '" + PMUser.UserSysID + "' and Status = '" + PMUser.PMOcState + "') and isScheduleWorkID = '1'";
-            bool aaa = string.IsNullOrEmpty(filter);
             if (!string.IsNullOrEmpty(filter) && filter != "{}" && filter !=null)
             {
                 JObject filters = JObject.Parse(filter);

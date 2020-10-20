@@ -57,17 +57,14 @@ namespace WebApiNew
             {
                 if (item.Name.ToLower() == "modeler") {
                     PmConnections.Modconnstr = "Data Source=" + datasource + ";Initial Catalog=" + item.InnerText + ";" + item.Attributes["security"].Value + ";User ID=" + item.Attributes["username"].Value + ";Password=" + item.Attributes["password"].Value + ";" + item.Attributes["muti"].Value;
-                    PmConnections.ModName = item.InnerText+".dbo";
                 }
                 else if (item.Name.ToLower() == "schedule")
                 {
                     PmConnections.Schconnstr = "Data Source=" + datasource + ";Initial Catalog=" + item.InnerText + ";" + item.Attributes["security"].Value + ";User ID=" + item.Attributes["username"].Value + ";Password=" + item.Attributes["password"].Value + ";" + item.Attributes["muti"].Value;
-                    PmConnections.SchName = item.InnerText + ".dbo";
                 }
                 else
                 {
                     PmConnections.Ctrlconnstr = "Data Source=" + datasource + ";Initial Catalog=" + item.InnerText + ";" + item.Attributes["security"].Value + ";User ID=" + item.Attributes["username"].Value + ";Password=" + item.Attributes["password"].Value + ";" + item.Attributes["muti"].Value;
-                    PmConnections.CtrlName = item.InnerText + ".dbo";
                 }
             }
 

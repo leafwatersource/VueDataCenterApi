@@ -8,16 +8,6 @@ using WebApiNew.Model;
 
 namespace WebApiNew.Controllers
 {
-    [Route("/[controller]")]
-    [ApiController]
-    public class Implementations : ControllerBase
-    {
-        [HttpPost]
-        public IActionResult Result([FromForm] string PageSize, [FromForm] string CurPage, [FromForm] string filte)
-        {
-            return Ok("111");
-        }
-    }
     /// <summary>
     /// 获取生产订单的设备组
     /// </summary>
@@ -40,10 +30,10 @@ namespace WebApiNew.Controllers
     public class ResView : ControllerBase
     {
         [HttpPost]
-        public IActionResult Result([FromForm]string resGroup)
+        public IActionResult Result([FromForm]string resGroup,[FromForm]string resName)
         {
             MImplementations mImplementations = new MImplementations();
-            return Ok(mImplementations.GetResView(resGroup).ToString());
+            return Ok(mImplementations.GetResView(resGroup, resName).ToString());
         }
     }
     /// <summary>
@@ -54,25 +44,10 @@ namespace WebApiNew.Controllers
     public class ResWorkView : ControllerBase
     {
         [HttpPost]
-        public IActionResult Result([FromForm] string PageSize, [FromForm] string CurPage, [FromForm] string Resource, [FromForm] string ViewName)
+        public IActionResult Result([FromForm] string PageSize, [FromForm] string CurPage, [FromForm] string Resource, [FromForm] string GroupName)
         {
             MImplementations mImplementations = new MImplementations();
-            return Ok(mImplementations.GetResPlan(PageSize,CurPage,Resource, ViewName));
-        }
-    }
-    [Route("/[controller]")]
-    [ApiController]
-    public class AllResView : ControllerBase
-    {
-        /// <summary>
-        /// 获取设备组下的所有设备的工单
-        /// </summary>
-        /// <param name="ResGroup">设备组的名称</param>
-        /// <returns></returns>
-        [HttpPost]
-        public IActionResult Result([FromForm]string ResGroup)
-        {
-            return Ok("111");
+            return Ok(mImplementations.GetResPlan(PageSize,CurPage,Resource, GroupName));
         }
     }
 }

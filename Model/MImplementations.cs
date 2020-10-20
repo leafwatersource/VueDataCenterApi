@@ -60,12 +60,12 @@ namespace WebApiNew.Model
         /// <param name="optionPlan">目标设备</param>
         /// <param name="ViewName">设备名称</param>
         /// <returns></returns>
-        public string GetResPlan(string PageSize, string CurPage,string Resource, string ViewName)
+        public string GetResPlan(string PageSize, string CurPage,string Resource, string GroupName)
         {
             int max = 0;
             if (Convert.ToInt32(CurPage) > 1)
             {
-                max = MaxBarID((Convert.ToInt32(CurPage) - 1) * Convert.ToInt32(PageSize), Resource);
+                max = MaxBarID((Convert.ToInt32(CurPage) - 1) * Convert.ToInt32(PageSize), Resource, GroupName);
             }
             DataTable table = new DataTable();
             //查看要查询数据库中的哪些列
@@ -82,13 +82,13 @@ namespace WebApiNew.Model
                     SQLWorkPlanFiled += "," + item.Key;
                 }
             }
-            if (ViewName == null)
+            if (string.IsNullOrEmpty(Resource))
             {
-                table = GetWorkPlanBars(PageSize,SQLWorkPlanFiled, " OperationID = '" + Resource + "' and BarID>'" + max + "'");
+                table = GetWorkPlanBars(PageSize, SQLWorkPlanFiled, " OperationID in ( select resName from View_pmViewGroup where VIewName = '" + GroupName + "') and BarID>'" + max + "'");
             }
-            else if (Resource == null)
+            else
             {
-                table = GetWorkPlanBars(PageSize,SQLWorkPlanFiled, " OperationID in ( select resName from View_pmViewGroup where VIewName = '" + ViewName + "') and BarID>'"+max+"'");
+                table = GetWorkPlanBars(PageSize, SQLWorkPlanFiled, " OperationID = '" + Resource + "' and BarID>'" + max + "'");
             }
             foreach (var item in SQLWorkPlanFileds)
             {
@@ -112,7 +112,7 @@ namespace WebApiNew.Model
             table.AcceptChanges();
             JObject data = new JObject();
             data.Add("ImplementationData", JsonConvert.SerializeObject(table));
-            data.Add("ImplementationCount", ResWorkCount(Resource));
+            data.Add("ImplementationCount", ResWorkCount(Resource, GroupName));
             data.Add("ImplementationStatus", 1);
             return data.ToString();
         }
@@ -156,12 +156,16 @@ namespace WebApiNew.Model
             return table;
         }
    
-        public JObject GetResView(string resGroup)
+        public JObject GetResView(string resGroup,string resName)
         {
             DataTable table = new DataTable();
-            SqlCommand cmd = PmConnections.SchCmd();
+           SqlCommand cmd = PmConnections.SchCmd();
             JObject data = new JObject();
-            cmd.CommandText = "SELECT resName  FROM View_PmViewGroup where sysID ='" + PMUser.UserSysID + "' and ViewName  = '" + resGroup + "'";
+            cmd.CommandText = "SELECT resName  FROM View_PmViewGroup where sysID ='" + PMUser.UserSysID + "' and ViewName  = '" + resGroup + "' ";
+            if (!string.IsNullOrEmpty(resName))
+            {
+                cmd.CommandText += "and resName like '%" + resName + "%'";
+            }
             SqlDataAdapter da = new SqlDataAdapter(cmd);
             da.Fill(table);
             da.Dispose();
@@ -180,22 +184,36 @@ namespace WebApiNew.Model
             }
             return data;
         }
-        public int MaxBarID(int end,string resource)
+        public int MaxBarID(int end,string resource,string GroupName)
         {
             DataTable table = new DataTable();
             SqlCommand cmd = PmConnections.SchCmd();
-            cmd.CommandText = "select top " + end + " BarID from View_WorkPlansBars where OperationID = '"+ resource + "' and WorkPlanID in (select WorkPlanID from PMS_WorkPlans where Status = 'Released' and sysid = '"+PMUser.UserSysID+"') order by BarID";
+            if (string.IsNullOrEmpty(resource))
+            {
+                cmd.CommandText = "select top " + end + " BarID from View_WorkPlansBars where OperationID in ( select resName from View_pmViewGroup where VIewName = '" + GroupName + "') and WorkPlanID in (select WorkPlanID from PMS_WorkPlans where Status = 'Released' and sysid = '" + PMUser.UserSysID + "') order by BarID";
+            }
+            else
+            {
+                cmd.CommandText = "select top " + end + " BarID from View_WorkPlansBars where OperationID = '" + resource + "' and WorkPlanID in (select WorkPlanID from PMS_WorkPlans where Status = 'Released' and sysid = '" + PMUser.UserSysID + "') order by BarID";
+            }
             SqlDataAdapter ad = new SqlDataAdapter(cmd);
             ad.Fill(table);
             ad.Dispose();
             cmd.Connection.Close();
             return Convert.ToInt32(table.Rows[table.Rows.Count-1][0]);
         }
-        public int ResWorkCount(string resource)
+        public int ResWorkCount(string resource,string GroupName)
         {
             int count = 0;
             SqlCommand cmd = PmConnections.SchCmd();
-            cmd.CommandText = "select count(WIPID) from View_WorkPlansBars where  OperationID = '"+ resource + "' and WorkPlanID in (select WorkPlanID from PMS_WorkPlans where Status = 'Released' and sysid = '" + PMUser.UserSysID + "')";
+            if (string.IsNullOrEmpty(resource))
+            {
+                cmd.CommandText = "select count(WIPID) from View_WorkPlansBars where  OperationID in ( select resName from View_pmViewGroup where VIewName = '" + GroupName + "') and WorkPlanID in (select WorkPlanID from PMS_WorkPlans where Status = 'Released' and sysid = '" + PMUser.UserSysID + "')";
+            }
+            else
+            {
+                cmd.CommandText = "select count(WIPID) from View_WorkPlansBars where  OperationID = '" + resource + "' and WorkPlanID in (select WorkPlanID from PMS_WorkPlans where Status = 'Released' and sysid = '" + PMUser.UserSysID + "')";
+            }
             count = (int)cmd.ExecuteScalar();
             cmd.Connection.Close();
             return count;

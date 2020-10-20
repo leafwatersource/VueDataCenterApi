@@ -38,25 +38,6 @@ namespace WebApiNew.Controllers
     }
     [Route("/[controller]")]
     [ApiController]
-    public class fuzzyFilter : ControllerBase
-    {
-        [HttpPost]
-        public IActionResult Result([FromForm] string PageSize, [FromForm] string CurPage, [FromForm] string filter,[FromForm]string fuzzyStr,[FromForm]string workType)
-        {
-            MdataCenter mdataCenter = new MdataCenter();
-            DataTable dt = mdataCenter.WorkOrderData(PageSize, CurPage, filter, fuzzyStr, workType);
-            int total = mdataCenter.GetOrderCount(filter, fuzzyStr, workType);
-            JObject data = new JObject {
-                { "code", "0"},
-                { "data", JsonConvert.SerializeObject(dt)},
-                {"total", total },
-                { "msg", "successful"}
-            };
-            return Ok(data.ToString());
-        }
-    }
-    [Route("/[controller]")]
-    [ApiController]
     public class PlanMessage:ControllerBase
     {
         /// <summary>
