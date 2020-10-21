@@ -2,7 +2,7 @@
 <AppConfig>
 <Connection datasource ="121.201.33.122,3183">
   <Modeler username ="APSUSER_RATETEC" password="Szrate8520++----++" security="Persist Security Info=True" muti ="MultiSubnetFailover=True" >TENGLONG_MODELER</Modeler>
-  <Schedule username ="APSUSER_RATETEC" password="Szrate8520++----++" security="Persist Security Info=True" muti ="MultiSubnetFailover=True" >TENGLONG_SCHEDULE</Schedule>
+  <Schedule username ="APSUSER_RATETEC" password="Szrate8520++----++" security="Persist Security Info=True" muti ="MultiSubnetFailover=True" >sch_tgtest</Schedule>
   <Pmcontrol username ="APSUSER_RATETEC" password="Szrate8520++----++" security="Persist Security Info=True" muti ="MultiSubnetFailover=True" >TENGLONG_PMCONTROL</Pmcontrol>
 </Connection>
   <PMSettings>

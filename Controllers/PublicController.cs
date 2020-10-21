@@ -10,8 +10,8 @@ using WebApiNew.StaticFunc;
 namespace WebApiNew.Controllers
 {
  
-    [Route("api/[controller]")]
     [Route("/[controller]")]
+    [ApiController]
     public class TableFiled : ControllerBase
     {
         /// <summary>
