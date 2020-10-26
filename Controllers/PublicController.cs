@@ -25,10 +25,10 @@ namespace WebApiNew.Controllers
             if (tableName == "WorkOrder")
             {
                 JObject order = AppSetting.TableFileds.SelectToken("SQLWorkOrderFiled").ToObject<JObject>();
-                foreach (var item in AppSetting.TableFileds.SelectToken("SQLAttrFiled").ToObject<JObject>())
-                {
-                    order.Add(item.Key, item.Value);
-                }
+                //foreach (var item in AppSetting.TableFileds.SelectToken("SQLAttrFiled").ToObject<JObject>())
+                //{
+                //    order.Add(item.Key, item.Value);
+                //}
                 return Ok(order.ToString());
             }
             else if (tableName == "WorkPlan")

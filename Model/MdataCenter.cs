@@ -134,12 +134,13 @@ namespace WebApiNew.Model
         /// <param name="columns"></param>
         /// <param name="workType">工单类型</param>
         /// <returns></returns>
-        public static DataTable GetOrder(string pageSize, string filter, int maxUid, string columns,string workType)
+        public static DataTable GetOrder(string pageSize, string filter, int maxUid, string columns,string workType,string fuzzyFilter)
         {
             DataTable table = new DataTable();
             SqlCommand cmd = PmConnections.SchCmd();
             cmd.CommandText = "select top " + pageSize + " " + columns + " from User_WorkOrder where uid > '" + maxUid + "' and isScheduleWorkID = '1' and workPlanID in (SELECT workPlanID FROM PMS_WorkPlans where sysID = '" + PMUser.UserSysID + "' and Status = '" + PMUser.PMOcState + "')";
             string filterStr = "";
+            string fuzzyFilterText = "";
             if (!String.IsNullOrEmpty(filter) && filter != "{}")
             {
                     JObject filters = JObject.Parse(filter);
@@ -168,7 +169,23 @@ namespace WebApiNew.Model
                 //异常的订单
                 filterStr += " and planStartTime is null";
             }
-            cmd.CommandText += filterStr + " order by UID";
+            if (!string.IsNullOrEmpty(fuzzyFilter))
+            {
+                JObject SQLWorkOrderFileds = AppSetting.TableFileds.SelectToken("SQLWorkOrderFiled").ToObject<JObject>();
+                foreach (var item in SQLWorkOrderFileds)
+                {
+                    if (string.IsNullOrEmpty(fuzzyFilterText))
+                    {
+                        fuzzyFilterText += " and ( Convert(varchar," + item.Key + ",120) like '%" + fuzzyFilter + "%'";
+                    }
+                    else
+                    {
+                        fuzzyFilterText += " or Convert(varchar," + item.Key + ",120) like '%" + fuzzyFilter + "%'";
+                    }
+                }
+                fuzzyFilterText += ")";
+            }
+            cmd.CommandText += filterStr + fuzzyFilterText + " order by UID";
             SqlDataAdapter ad = new SqlDataAdapter(cmd);
             ad.Fill(table);
             ad.Dispose();
@@ -200,33 +217,33 @@ namespace WebApiNew.Model
             {
                 max = GetMaxUid((Convert.ToInt32(curPage) - 1) * Convert.ToInt32(pageSize),workType);
             }
-            DataTable dt = GetOrder(pageSize, filter, max, SQLWorkOrderFiled, workType);
-            DataTable AttrTable = GetAttrTable(dt);
+            DataTable dt = GetOrder(pageSize, filter, max, SQLWorkOrderFiled, workType, fuzzyFilter);
+            //DataTable AttrTable = GetAttrTable(dt);
             foreach (var item in SQLWorkOrderFileds)
             {
                 dt.Columns[item.Key].ColumnName = item.Value.Value<string>();
             }
-            JObject SQLAttrFiled = AppSetting.TableFileds.SelectToken("SQLAttrFiled").ToObject<JObject>();
-            foreach (var item in SQLAttrFiled)
-            {
-                dt.Columns.Add(item.Value.Value<string>());
-            }
-            for (int i = 0; i < dt.Rows.Count; i++)
-            {
-                for (int v = 0; v < AttrTable.Rows.Count; v++)
-                {
-                    if (AttrTable.Rows[v]["itemName"].ToString() == dt.Rows[i]["产品名称"].ToString())
-                    {
-                        foreach (DataColumn col in AttrTable.Columns)
-                        {
-                            if (col.ColumnName != "itemName")
-                            {
-                                dt.Rows[i][col.ColumnName] = AttrTable.Rows[v][col.ColumnName].ToString().Replace(" - ", " ").Replace("\"", "'");
-                            }
-                        }
-                    }
-                }
-            }           
+            //JObject SQLAttrFiled = AppSetting.TableFileds.SelectToken("SQLAttrFiled").ToObject<JObject>();
+            //foreach (var item in SQLAttrFiled)
+            //{
+            //    dt.Columns.Add(item.Value.Value<string>());
+            //}
+            //for (int i = 0; i < dt.Rows.Count; i++)
+            //{
+            //    for (int v = 0; v < AttrTable.Rows.Count; v++)
+            //    {
+            //        if (AttrTable.Rows[v]["itemName"].ToString() == dt.Rows[i]["产品名称"].ToString())
+            //        {
+            //            foreach (DataColumn col in AttrTable.Columns)
+            //            {
+            //                if (col.ColumnName != "itemName")
+            //                {
+            //                    dt.Rows[i][col.ColumnName] = AttrTable.Rows[v][col.ColumnName].ToString().Replace(" - ", " ").Replace("\"", "'");
+            //                }
+            //            }
+            //        }
+            //    }
+            //}           
             return dt;
         }
         /// <summary>

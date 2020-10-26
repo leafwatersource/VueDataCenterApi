@@ -44,10 +44,10 @@ namespace WebApiNew.Controllers
     public class ResWorkView : ControllerBase
     {
         [HttpPost]
-        public IActionResult Result([FromForm] string PageSize, [FromForm] string CurPage, [FromForm] string Resource, [FromForm] string GroupName)
+        public IActionResult Result([FromForm] string PageSize, [FromForm] string CurPage, [FromForm] string Resource, [FromForm] string GroupName,[FromForm]bool ChangeModel)
         {
             MImplementations mImplementations = new MImplementations();
-            return Ok(mImplementations.GetResPlan(PageSize,CurPage,Resource, GroupName));
+            return Ok(mImplementations.GetResPlan(PageSize,CurPage,Resource, GroupName, ChangeModel));
         }
     }
 }
