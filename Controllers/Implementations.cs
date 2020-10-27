@@ -36,18 +36,27 @@ namespace WebApiNew.Controllers
             return Ok(mImplementations.GetResView(resGroup, resName).ToString());
         }
     }
-    /// <summary>
-    /// 获取设备下的所有的工单
-    /// </summary>
+   
     [Route("/[controller]")]
     [ApiController]
     public class ResWorkView : ControllerBase
     {
+        /// <summary>
+        /// 获取设备下的所有的工单
+        /// </summary>
+        /// <param name="PageSize">一页多少条数据</param>
+        /// <param name="CurPage">第几页的数据</param>
+        /// <param name="Resource">设备名称</param>
+        /// <param name="GroupName">设备组名称</param>
+        /// <param name="ChangeModel">是否是换模</param>
+        /// <param name="filter">精确筛选</param>
+        /// <param name="fuzzyFilter">模糊筛选的字段</param>
+        /// <returns></returns>
         [HttpPost]
-        public IActionResult Result([FromForm] string PageSize, [FromForm] string CurPage, [FromForm] string Resource, [FromForm] string GroupName,[FromForm]bool ChangeModel)
+        public IActionResult Result([FromForm] string PageSize, [FromForm] string CurPage, [FromForm] string Resource, [FromForm] string GroupName,[FromForm]bool ChangeModel,[FromForm]string filter,[FromForm]string fuzzyFilter)
         {
             MImplementations mImplementations = new MImplementations();
-            return Ok(mImplementations.GetResPlan(PageSize,CurPage,Resource, GroupName, ChangeModel));
+            return Ok(mImplementations.GetResPlan(PageSize,CurPage,Resource, GroupName, ChangeModel, filter, fuzzyFilter));
         }
     }
 }

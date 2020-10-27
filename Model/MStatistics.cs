@@ -16,6 +16,7 @@ namespace WebApiNew.Model
             public string Resstate { get; set; }
             public string Resorderstate { get; set; }
             public int ResType { get; set; }
+            public string Description { get; set; }
         }
         public List<Dashresbean> GetDashResList(int empid)
         {
@@ -64,7 +65,9 @@ namespace WebApiNew.Model
                 DataRow[] drresevent = dtmesrec.Select("ResName = '" + resbean.Resname + "'");
                 if (drresevent.Count() > 0)
                 {
+                   
                     string eventtype = drresevent[0]["EventType"].ToString();
+                    string desc = drresevent[0]["Description"].ToString();
                     if (eventtype.Equals("S"))
                     {
                         resbean.Resstate = "换线中";
@@ -83,6 +86,7 @@ namespace WebApiNew.Model
                         resbean.Resorderstate = string.Empty;
                         resbean.ResType = 0;
                     }
+                    resbean.Description = desc;
                 }
                 else
                 {

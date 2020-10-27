@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <AppConfig>
 <Connection datasource ="121.201.33.122,3183">
-  <Modeler username ="APSUSER_RATETEC" password="Szrate8520++----++" security="Persist Security Info=True" muti ="MultiSubnetFailover=True" >BEITE_MODELER</Modeler>
-  <Schedule username ="APSUSER_RATETEC" password="Szrate8520++----++" security="Persist Security Info=True" muti ="MultiSubnetFailover=True" >BEITE_SCHEDULE</Schedule>
-  <Pmcontrol username ="APSUSER_RATETEC" password="Szrate8520++----++" security="Persist Security Info=True" muti ="MultiSubnetFailover=True" >BEITE_PMCONTROL</Pmcontrol>
+  <Modeler username ="APSUSER_RATETEC" password="Szrate8520++----++" security="Persist Security Info=True" muti ="MultiSubnetFailover=True" >TENGLONG_MODELER</Modeler>
+  <Schedule username ="APSUSER_RATETEC" password="Szrate8520++----++" security="Persist Security Info=True" muti ="MultiSubnetFailover=True" >TENGLONG_SCHEDULE</Schedule>
+  <Pmcontrol username ="APSUSER_RATETEC" password="Szrate8520++----++" security="Persist Security Info=True" muti ="MultiSubnetFailover=True" >TENGLONG_PMCONTROL</Pmcontrol>
 </Connection>
   <PMSettings>
     <OcState>Released</OcState>
@@ -23,6 +23,11 @@
       <itemAttr2 type="string" name="itemAttr2">客户名称</itemAttr2>
       <itemAttr3 type="string" name="itemAttr3">图纸版本号</itemAttr3>
     </SQLWorkOrderFiled>
+    <SQLAttrFiled>
+      <itemAttr1 type="string" name="itemAttr1">产品分类</itemAttr1>
+      <itemAttr2 type="string" name="itemAttr2">客户名称</itemAttr2>
+      <itemAttr3 type="string" name="itemAttr3">图纸版本号</itemAttr3>
+    </SQLAttrFiled>
     <SQLWorkPlanFiled>
       <WIPID type="string" name="WIPID">主工单</WIPID>
       <itemWorkID type="string" name="itemWorkID">工单</itemWorkID>
