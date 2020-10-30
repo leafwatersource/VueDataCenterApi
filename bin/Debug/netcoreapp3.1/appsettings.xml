@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <AppConfig>
 <Connection datasource ="121.201.33.122,3183">
-  <Modeler username ="APSUSER_RATETEC" password="Szrate8520++----++" security="Persist Security Info=True" muti ="MultiSubnetFailover=True" >TENGLONG_MODELER</Modeler>
-  <Schedule username ="APSUSER_RATETEC" password="Szrate8520++----++" security="Persist Security Info=True" muti ="MultiSubnetFailover=True" >TENGLONG_SCHEDULE</Schedule>
-  <Pmcontrol username ="APSUSER_RATETEC" password="Szrate8520++----++" security="Persist Security Info=True" muti ="MultiSubnetFailover=True" >TENGLONG_PMCONTROL</Pmcontrol>
+  <Modeler username ="APSUSER_RATETEC" password="Szrate8520++----++" security="Persist Security Info=True" muti ="MultiSubnetFailover=True" >WOODFAST_MODELER</Modeler>
+  <Schedule username ="APSUSER_RATETEC" password="Szrate8520++----++" security="Persist Security Info=True" muti ="MultiSubnetFailover=True" >WOODFAST_SCHEDULE</Schedule>
+  <Pmcontrol username ="APSUSER_RATETEC" password="Szrate8520++----++" security="Persist Security Info=True" muti ="MultiSubnetFailover=True" >WOODFAST_PMCONTROL</Pmcontrol>
 </Connection>
   <PMSettings>
     <OcState>Released</OcState>

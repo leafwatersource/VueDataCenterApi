@@ -28,17 +28,6 @@ namespace WebApiNew.StaticFunc
                 }
                 catch (Exception e)
                 {
-                    //CErrorMsg error = new CErrorMsg
-                    //{
-                    //    ErrorName = "Schedule SqlCommand Error",
-                    //    ErrorMessage = e.Message,
-                    //    ErrorTime = DateTime.Now
-                    //};
-                    //if (SysMsgList.ErrorList == null)
-                    //{
-                    //    SysMsgList.ErrorList = new List<CErrorMsg>();
-                    //}
-                    //SysMsgList.ErrorList.Add(error);
                 }
             }
             return cmd;
@@ -57,17 +46,6 @@ namespace WebApiNew.StaticFunc
                 }
                 catch (SqlException e)
                 {
-                    //CErrorMsg error = new CErrorMsg
-                    //{
-                    //    ErrorName = "Modeler SqlCommand Error",
-                    //    ErrorMessage = e.Message,
-                    //    ErrorTime = DateTime.Now
-                    //};
-                    //if (SysMsgList.ErrorList == null)
-                    //{
-                    //    SysMsgList.ErrorList = new List<CErrorMsg>();
-                    //}
-                    //SysMsgList.ErrorList.Add(error);
                 }
 
             }
@@ -87,17 +65,7 @@ namespace WebApiNew.StaticFunc
                 }
                 catch (SqlException e)
                 {
-                    //CErrorMsg error = new CErrorMsg
-                    //{
-                    //    ErrorName = "PmControl SqlCommand Error",
-                    //    ErrorMessage = e.Message,
-                    //    ErrorTime = DateTime.Now
-                    //};
-                    //if (SysMsgList.ErrorList == null)
-                    //{
-                    //    SysMsgList.ErrorList = new List<CErrorMsg>();
-                    //}
-                    //SysMsgList.ErrorList.Add(error);
+
                 }
             }
             return cmd;

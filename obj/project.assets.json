@@ -25,6 +25,15 @@
           "lib/netstandard2.1/EPPlus.dll": {}
         }
       },
+      "Intercom.Dotnet.Client/2.1.1": {
+        "type": "package",
+        "compile": {
+          "lib/net452/Intercom.dll": {}
+        },
+        "runtime": {
+          "lib/net452/Intercom.dll": {}
+        }
+      },
       "Microsoft.Extensions.Configuration/3.1.5": {
         "type": "package",
         "dependencies": {
@@ -1315,6 +1324,19 @@
         "lib/netstandard2.1/EPPlus.xml",
         "license.md",
         "readme.txt"
+      ]
+    },
+    "Intercom.Dotnet.Client/2.1.1": {
+      "sha512": "/HOK6Mf8BEnJDLSTF8qzClcTYg3j8Cs8NNxxYfjutOnriygu3aN+pTfuV+Qb7Y0I8bkj3g+JLClrc0oodVsoSg==",
+      "type": "package",
+      "path": "intercom.dotnet.client/2.1.1",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "intercom.dotnet.client.2.1.1.nupkg.sha512",
+        "intercom.dotnet.client.nuspec",
+        "lib/net452/Intercom.dll",
+        "lib/net452/Intercom.pdb"
       ]
     },
     "Microsoft.Extensions.Configuration/3.1.5": {
@@ -4772,6 +4794,7 @@
   "projectFileDependencyGroups": {
     ".NETCoreApp,Version=v3.1": [
       "EPPlus >= 5.4.0",
+      "Intercom.Dotnet.Client >= 2.1.1",
       "Newtonsoft.Json >= 12.0.3",
       "System.Data.SqlClient >= 4.8.2"
     ]
@@ -4821,6 +4844,10 @@
             "target": "Package",
             "version": "[5.4.0, )"
           },
+          "Intercom.Dotnet.Client": {
+            "target": "Package",
+            "version": "[2.1.1, )"
+          },
           "Newtonsoft.Json": {
             "target": "Package",
             "version": "[12.0.3, )"
@@ -4851,5 +4878,17 @@
         "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.401\\RuntimeIdentifierGraph.json"
       }
     }
-  }
+  },
+  "logs": [
+    {
+      "code": "NU1701",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "已使用“.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8”而不是项目目标框架“.NETCoreApp,Version=v3.1”还原包“Intercom.Dotnet.Client 2.1.1”。此包可能与项目不完全兼容。",
+      "libraryId": "Intercom.Dotnet.Client",
+      "targetGraphs": [
+        ".NETCoreApp,Version=v3.1"
+      ]
+    }
+  ]
 }

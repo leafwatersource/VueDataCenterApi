@@ -36,3 +36,4 @@ C:\Users\Mr.Ye\Desktop\WebApiNew\bin\Release\netcoreapp3.1\Microsoft.Extensions.
 C:\Users\Mr.Ye\Desktop\WebApiNew\bin\Release\netcoreapp3.1\System.Text.Encoding.CodePages.dll
 C:\Users\Mr.Ye\Desktop\WebApiNew\bin\Release\netcoreapp3.1\System.Xml.XPath.XmlDocument.dll
 C:\Users\Mr.Ye\Desktop\WebApiNew\bin\Release\netcoreapp3.1\runtimes\win\lib\netcoreapp2.0\System.Text.Encoding.CodePages.dll
+C:\Users\Mr.Ye\Desktop\WebApiNew\bin\Release\netcoreapp3.1\Intercom.dll

@@ -218,32 +218,10 @@ namespace WebApiNew.Model
                 max = GetMaxUid((Convert.ToInt32(curPage) - 1) * Convert.ToInt32(pageSize),workType);
             }
             DataTable dt = GetOrder(pageSize, filter, max, SQLWorkOrderFiled, workType, fuzzyFilter);
-            //DataTable AttrTable = GetAttrTable(dt);
             foreach (var item in SQLWorkOrderFileds)
             {
                 dt.Columns[item.Key].ColumnName = item.Value.Value<string>();
             }
-            //JObject SQLAttrFiled = AppSetting.TableFileds.SelectToken("SQLAttrFiled").ToObject<JObject>();
-            //foreach (var item in SQLAttrFiled)
-            //{
-            //    dt.Columns.Add(item.Value.Value<string>());
-            //}
-            //for (int i = 0; i < dt.Rows.Count; i++)
-            //{
-            //    for (int v = 0; v < AttrTable.Rows.Count; v++)
-            //    {
-            //        if (AttrTable.Rows[v]["itemName"].ToString() == dt.Rows[i]["产品名称"].ToString())
-            //        {
-            //            foreach (DataColumn col in AttrTable.Columns)
-            //            {
-            //                if (col.ColumnName != "itemName")
-            //                {
-            //                    dt.Rows[i][col.ColumnName] = AttrTable.Rows[v][col.ColumnName].ToString().Replace(" - ", " ").Replace("\"", "'");
-            //                }
-            //            }
-            //        }
-            //    }
-            //}           
             return dt;
         }
         /// <summary>

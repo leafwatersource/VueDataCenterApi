@@ -19,6 +19,9 @@ namespace WebApiNew.StaticFunc
             public string UserGuid { get; set; }
             public string UserSysID { get; set; }
         }
+        /// <summary>
+        /// 存取用户的信息
+        /// </summary>
         public class PMUser
         {
             public static string EmpID { get; set; }

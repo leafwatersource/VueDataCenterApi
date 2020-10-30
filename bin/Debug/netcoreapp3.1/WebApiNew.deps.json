@@ -25,6 +25,7 @@
       "WebApiNew/1.0.0": {
         "dependencies": {
           "EPPlus": "5.4.0",
+          "Intercom.Dotnet.Client": "2.1.1",
           "Newtonsoft.Json": "12.0.3",
           "System.Data.SqlClient": "4.8.2",
           "Microsoft.AspNetCore.Antiforgery": "3.1.0.0",
@@ -331,6 +332,17 @@
         },
         "compile": {
           "lib/netstandard2.1/EPPlus.dll": {}
+        }
+      },
+      "Intercom.Dotnet.Client/2.1.1": {
+        "runtime": {
+          "lib/net452/Intercom.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        },
+        "compile": {
+          "lib/net452/Intercom.dll": {}
         }
       },
       "Microsoft.Extensions.Configuration/3.1.5": {
@@ -2745,6 +2757,13 @@
       "sha512": "sha512-JMgS03PHMhOmnVdRdE0gsycuVjt54jdP1Yy1Y4mszQxRC19Upoz/o/ie3SwfLoU/zxtA+HWwHw7KJ6Uc5et72A==",
       "path": "epplus/5.4.0",
       "hashPath": "epplus.5.4.0.nupkg.sha512"
+    },
+    "Intercom.Dotnet.Client/2.1.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-/HOK6Mf8BEnJDLSTF8qzClcTYg3j8Cs8NNxxYfjutOnriygu3aN+pTfuV+Qb7Y0I8bkj3g+JLClrc0oodVsoSg==",
+      "path": "intercom.dotnet.client/2.1.1",
+      "hashPath": "intercom.dotnet.client.2.1.1.nupkg.sha512"
     },
     "Microsoft.Extensions.Configuration/3.1.5": {
       "type": "package",
