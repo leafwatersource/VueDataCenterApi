@@ -18,7 +18,8 @@ namespace WebApiNew.Model
         /// <returns>wapMesEventRec表</returns>
         public JObject GetUserLog(string PageSize, string CurPage, string filter)
         {
-            JObject obj = AppSetting.TableFileds.SelectToken("HistoryTableFiled").ToObject<JObject>();
+            var SQLWorkPlanFileds = AppSetting.TableFileds.GetValue("HistoryTableFiled").ToString();
+            var mJObj = JArray.Parse(SQLWorkPlanFileds);
             string sqlStr = "";
             DataTable table = new DataTable();
             int total = GetCountLog(filter);
@@ -27,21 +28,48 @@ namespace WebApiNew.Model
             {
                 minPmuid = LastPmuid((Convert.ToInt32(CurPage) - 1) * Convert.ToInt32(PageSize), filter);
             }
-            foreach (var item in obj)
+            foreach (var item in mJObj)
             {
+                JObject itemObj = item.ToObject<JObject>();
+                string key = itemObj.First.First.Path;
+                string type = itemObj.Last.Last.Value<string>();
+
                 if (string.IsNullOrEmpty(sqlStr))
                 {
-                    sqlStr += item.Key;
+                    if (type == "datetime")
+                    {
+                        sqlStr += "CONVERT(varchar(100)," + key + ", 120) AS " + key;
+                    }
+                    else if (type == "date")
+                    {
+                        sqlStr += "CONVERT(varchar(100)," + key + ", 111) AS " + key;
+                    }
+                    else
+                    {
+                        sqlStr += key;
+                    }
+                 
                 }
                 else
                 {
-                    sqlStr += "," + item.Key;
+                    if (type == "datetime")
+                    {
+                        sqlStr += ",CONVERT(varchar(100)," + key + ", 120) AS " + key;
+                    }
+                    else if (type == "date")
+                    {
+                        sqlStr += ",CONVERT(varchar(100)," + key + ", 111) AS " + key;
+                    }
+                    else
+                    {
+                        sqlStr += "," + key;
+                    }
                 }
             }
             SqlCommand cmd = PmConnections.SchCmd();
             if (Convert.ToInt32(CurPage)<2)
             {
-                cmd.CommandText = "SELECT top " + PageSize + ' ' + sqlStr + " from wapMesEventRec";
+                cmd.CommandText = "SELECT top " + PageSize + ' ' + sqlStr + " from vWapRec";
                 if (!string.IsNullOrEmpty(filter))
                 {
                     cmd.CommandText += " where EventTime >='" + filter + "'";
@@ -49,7 +77,7 @@ namespace WebApiNew.Model
             }
             else
             {
-                cmd.CommandText = "SELECT top " + PageSize + ' ' + sqlStr + " from wapMesEventRec where pmuid < '" + minPmuid + "'";
+                cmd.CommandText = "SELECT top " + PageSize + ' ' + sqlStr + " from vWapRec where pmuid < '" + minPmuid + "'";
                 if (!string.IsNullOrEmpty(filter))
                 {
                     cmd.CommandText += " and EventTime>='" + filter + "'";
@@ -62,9 +90,12 @@ namespace WebApiNew.Model
             da.Fill(table);
             da.Dispose();
             cmd.Connection.Dispose();
-            foreach (var item in obj)
+            foreach (var item in mJObj)
             {
-                table.Columns[item.Key].ColumnName = item.Value.Value<string>();
+                JObject itemObj = item.ToObject<JObject>();
+                string key = itemObj.First.First.Path;
+                string value = itemObj.First.First.Value<string>();
+                table.Columns[key].ColumnName = value;
             }
             JObject tableData = new JObject {
                 { "total", total },
@@ -85,7 +116,7 @@ namespace WebApiNew.Model
         {
             int count = 0;
             SqlCommand cmd = PmConnections.SchCmd();
-            cmd.CommandText = "SELECT count(*) from wapMesEventRec";
+            cmd.CommandText = "SELECT count(*) from vWapRec";
             if (!string.IsNullOrEmpty(filter))
             {
                 cmd.CommandText+= " where EventTime >='" + filter + "'";
@@ -103,7 +134,7 @@ namespace WebApiNew.Model
             DataTable table = new DataTable();
             SqlCommand cmd = PmConnections.SchCmd();
             int min;
-            cmd.CommandText = "select top " + end + " PMUID from wapMesEventRec";
+            cmd.CommandText = "select top " + end + " PMUID from vWapRec";
             if (!string.IsNullOrEmpty(filter))
             {
                 cmd.CommandText += " where EventTime >='" + filter + "'";

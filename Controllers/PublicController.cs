@@ -24,20 +24,15 @@ namespace WebApiNew.Controllers
         {
             if (tableName == "WorkOrder")
             {
-                JObject order = AppSetting.TableFileds.SelectToken("SQLWorkOrderFiled").ToObject<JObject>();
-                //foreach (var item in AppSetting.TableFileds.SelectToken("SQLAttrFiled").ToObject<JObject>())
-                //{
-                //    order.Add(item.Key, item.Value);
-                //}
-                return Ok(order.ToString());
+                return Ok(AppSetting.TableFileds.GetValue("SQLWorkOrderFiled").ToString());
             }
             else if (tableName == "WorkPlan")
             {
-                return Ok(AppSetting.TableFileds.SelectToken("SQLWorkPlanFiled").ToObject<JObject>().ToString());
+                return Ok(AppSetting.TableFileds.GetValue("SQLWorkPlanFiled").ToString());
             }
             else if (tableName == "History")
             {
-                return Ok(AppSetting.TableFileds.SelectToken("HistoryTableFiled").ToObject<JObject>().ToString());
+                return Ok(AppSetting.TableFileds.GetValue("HistoryTableFiled").ToString());
             }
             return Ok("表格的列查询错误");
         }

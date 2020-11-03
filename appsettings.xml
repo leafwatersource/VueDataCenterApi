@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <AppConfig>
 <Connection datasource ="121.201.33.122,3183">
-  <Modeler username ="APSUSER_RATETEC" password="Szrate8520++----++" security="Persist Security Info=True" muti ="MultiSubnetFailover=True" >WOODFAST_MODELER</Modeler>
-  <Schedule username ="APSUSER_RATETEC" password="Szrate8520++----++" security="Persist Security Info=True" muti ="MultiSubnetFailover=True" >WOODFAST_SCHEDULE</Schedule>
-  <Pmcontrol username ="APSUSER_RATETEC" password="Szrate8520++----++" security="Persist Security Info=True" muti ="MultiSubnetFailover=True" >WOODFAST_PMCONTROL</Pmcontrol>
+  <Modeler username ="APSUSER_RATETEC" password="Szrate8520++----++" security="Persist Security Info=True" muti ="MultiSubnetFailover=True" >BEITE_MODELER</Modeler>
+  <Schedule username ="APSUSER_RATETEC" password="Szrate8520++----++" security="Persist Security Info=True" muti ="MultiSubnetFailover=True" >BEITE_SCHEDULE</Schedule>
+  <Pmcontrol username ="APSUSER_RATETEC" password="Szrate8520++----++" security="Persist Security Info=True" muti ="MultiSubnetFailover=True" >BEITE_PMCONTROL</Pmcontrol>
 </Connection>
   <PMSettings>
     <OcState>Released</OcState>
@@ -15,19 +15,14 @@
       <productID type="string" name="productID">产品名称</productID>
       <allQuantity type="string" name="allQuantity">工单总数</allQuantity>
       <desp type="string" name="desp">描述</desp>
-      <planStartTime type="string" name="planStartTime">计划开始时间</planStartTime>
-      <planFinishTime type="string" name="planFinishTime">计划结束时间</planFinishTime>
-      <firstDemandDay type="string" name="firstDemandDay">需求日期</firstDemandDay>
+      <planStartTime type="datetime" name="planStartTime">计划开始时间</planStartTime>
+      <planFinishTime type="datetime" name="planFinishTime">计划结束时间</planFinishTime>
+      <firstDemandDay type="date" name="firstDemandDay">需求日期</firstDemandDay>
       <delayDays type="string" name="delayDays">延迟天数</delayDays>
       <itemAttr1 type="string" name="itemAttr1">产品分类</itemAttr1>
       <itemAttr2 type="string" name="itemAttr2">客户名称</itemAttr2>
       <itemAttr3 type="string" name="itemAttr3">图纸版本号</itemAttr3>
     </SQLWorkOrderFiled>
-    <SQLAttrFiled>
-      <itemAttr1 type="string" name="itemAttr1">产品分类</itemAttr1>
-      <itemAttr2 type="string" name="itemAttr2">客户名称</itemAttr2>
-      <itemAttr3 type="string" name="itemAttr3">图纸版本号</itemAttr3>
-    </SQLAttrFiled>
     <SQLWorkPlanFiled>
       <WIPID type="string" name="WIPID">主工单</WIPID>
       <itemWorkID type="string" name="itemWorkID">工单</itemWorkID>
@@ -36,36 +31,39 @@
       <quantity type="string" name="quantity">排程数量</quantity>
       <finishedQuantity type="string" name="finishedQuantity">完成数量</finishedQuantity>
       <jobFinishedQty type="string" name="jobFinishedQty">总完成数</jobFinishedQty>
-      <firstDemandDay type="string" name="firstDemandDay">需求日期</firstDemandDay>
+      <firstDemandDay type="date" name="firstDemandDay">需求日期</firstDemandDay>
       <finishStatus type="string" name="finishStatus">完成状态</finishStatus>
       <route type="string" name="route">流程</route>
       <realOpName type="string" name="realOpName">工序</realOpName>
       <OperationID type="string" name="OperationID">设备</OperationID>
       <Lock type="string" name="Lock">锁定</Lock>
       <RealWorkTime type="string" name="RealWorkTime">生产时长</RealWorkTime>
-      <PlannedStart type="string" name="PlannedStart">计划开始</PlannedStart>
-      <PlannedFinish type="string" name="PlannedFinish">计划结束</PlannedFinish>
-      <PlannedSetup type="string" name="PlannedSetup">切换开始</PlannedSetup>
+      <PlannedStart type="datetime" name="PlannedStart">计划开始</PlannedStart>
+      <PlannedFinish type="datetime" name="PlannedFinish">计划结束</PlannedFinish>
+      <PlannedSetup type="datetime" name="PlannedSetup">切换开始</PlannedSetup>
       <setupTime type="string" name="setupTime">切换时间</setupTime>
       <State type="string" name="State">工单状态</State>
       <schPri type="string" name="schPri">优先级</schPri>
     </SQLWorkPlanFiled>
     <HistoryTableFiled>
-      <EventMessage name="EventMessage">事件类型</EventMessage>
-      <EventTime name="EventTime">事件时间</EventTime>
-      <ResName name="ResName">设备名称</ResName>
-      <WorkID name="WorkID">工单号码</WorkID>
-      <OpName name="OpName">工序</OpName>
-      <ProductID name="ProductID">产品名称</ProductID>
-      <Description name="Description">描述</Description>
-      <JobQty name="JobQty">工单数量</JobQty>
-      <FinishedQty name="FinishedQty">完成数量</FinishedQty>
-      <MesOperator name="MesOperator">操作人</MesOperator>
-      <MesAttr1 name="MesAttr1">备注</MesAttr1>
-      <ScrappedQty name="ScrappedQty">不良数量</ScrappedQty>
-      <DayShift name="DayShift">班次</DayShift>
-      <PlanQty name="PlanQty">计划数量</PlanQty>
-      <OrderUID name="OrderUID">UID</OrderUID>
+      <EventMessage name="EventMessage" type="string">事件类型</EventMessage>
+      <EventTime name="EventTime" type="datetime">事件时间</EventTime>
+      <MesDate name="MesDate" type="date">事件执行日</MesDate>
+      <ResName name="ResName" type="string">设备名称</ResName>
+      <WorkID name="WorkID" type="string">工单号码</WorkID>
+      <OpName name="OpName" type="string">工序</OpName>
+      <ProductID name="ProductID" type="string">产品名称</ProductID>
+      <Description name="Description" type="string">描述</Description>
+      <JobQty name="JobQty" type="string">工单数量</JobQty>
+      <FinishedQty name="FinishedQty" type="string">完成数量</FinishedQty>
+      <MesOperator name="MesOperator" type="string">操作人</MesOperator>
+      <MesAttr1 name="MesAttr1" type="string">备注</MesAttr1>
+      <ScrappedQty name="ScrappedQty" type="string">不良数量</ScrappedQty>
+      <DayShift name="DayShift" type="string">班次</DayShift>
+      <opIndex name="opIndex" type="string">工序顺序</opIndex>
+      <itemAttr1 name="itemAttr1" type="string">属性1</itemAttr1>
+      <PlanQty name="PlanQty" type="string">计划数量</PlanQty>
+      <OrderUID name="OrderUID" type="string">UID</OrderUID>
     </HistoryTableFiled>
   </TableFileds>
 </AppConfig>

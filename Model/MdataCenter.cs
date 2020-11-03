@@ -171,16 +171,19 @@ namespace WebApiNew.Model
             }
             if (!string.IsNullOrEmpty(fuzzyFilter))
             {
-                JObject SQLWorkOrderFileds = AppSetting.TableFileds.SelectToken("SQLWorkOrderFiled").ToObject<JObject>();
-                foreach (var item in SQLWorkOrderFileds)
+                var SQLWorkOrderFileds = AppSetting.TableFileds.GetValue("SQLWorkOrderFiled").ToString();
+                var mJObj = JArray.Parse(SQLWorkOrderFileds);
+                foreach (var item in mJObj)
                 {
+                    JObject itemObj = item.ToObject<JObject>(); 
+                    string key = itemObj.First.First.Path;
                     if (string.IsNullOrEmpty(fuzzyFilterText))
                     {
-                        fuzzyFilterText += " and ( Convert(varchar," + item.Key + ",120) like '%" + fuzzyFilter + "%'";
+                        fuzzyFilterText += " and ( Convert(varchar," + key + ",120) like '%" + fuzzyFilter + "%'";
                     }
                     else
                     {
-                        fuzzyFilterText += " or Convert(varchar," + item.Key + ",120) like '%" + fuzzyFilter + "%'";
+                        fuzzyFilterText += " or Convert(varchar," + key + ",120) like '%" + fuzzyFilter + "%'";
                     }
                 }
                 fuzzyFilterText += ")";
@@ -199,17 +202,43 @@ namespace WebApiNew.Model
         public DataTable WorkOrderData(string pageSize, string curPage, string filter, string fuzzyFilter,string workType)
         {
             //查看要查询数据库中的哪些列
-            JObject SQLWorkOrderFileds = AppSetting.TableFileds.SelectToken("SQLWorkOrderFiled").ToObject<JObject>();
+            var SQLWorkOrderFileds =  AppSetting.TableFileds.GetValue("SQLWorkOrderFiled").ToString();
+            var mJObj = JArray.Parse(SQLWorkOrderFileds);
             string SQLWorkOrderFiled = "";
-            foreach (var item in SQLWorkOrderFileds)
+            foreach (var item in mJObj)
             {
+                JObject itemObj = item.ToObject<JObject>();
+                string key= itemObj.First.First.Path;
+                string  type = itemObj.Last.Last.Value<string>();
                 if (string.IsNullOrEmpty(SQLWorkOrderFiled))
                 {
-                    SQLWorkOrderFiled += item.Key;
+                    if (type=="datetime")
+                    {
+                        SQLWorkOrderFiled += "CONVERT(varchar(100)," + key + ", 120) AS " + key;
+                    }
+                    else if (type == "date")
+                    {
+                        SQLWorkOrderFiled += "CONVERT(varchar(100)," + key + ", 111) AS "+key;
+                    }
+                    else
+                    {
+                        SQLWorkOrderFiled += key;
+                    }
                 }
                 else
                 {
-                    SQLWorkOrderFiled += "," + item.Key;
+                    if (type == "datetime")
+                    {
+                        SQLWorkOrderFiled += ",CONVERT(varchar(100)," + key + ", 120) AS " + key;
+                    }
+                    else if (type == "date")
+                    {
+                        SQLWorkOrderFiled += ",CONVERT(varchar(100)," + key + ", 111) AS " + key;
+                    }
+                    else
+                    {
+                        SQLWorkOrderFiled +=","+key;
+                    }
                 }
             }
             int max = 0;
@@ -218,11 +247,15 @@ namespace WebApiNew.Model
                 max = GetMaxUid((Convert.ToInt32(curPage) - 1) * Convert.ToInt32(pageSize),workType);
             }
             DataTable dt = GetOrder(pageSize, filter, max, SQLWorkOrderFiled, workType, fuzzyFilter);
-            foreach (var item in SQLWorkOrderFileds)
+            foreach (var item in mJObj)
             {
-                dt.Columns[item.Key].ColumnName = item.Value.Value<string>();
+                JObject itemObj = item.ToObject<JObject>();
+                string path = itemObj.First.First.Path;
+                string column = itemObj.First.First.Value<string>();
+                dt.Columns[path].ColumnName = column;
+                //string column = itemObj;
             }
-            return dt;
+                return dt;
         }
         /// <summary>
         /// 获取属性的列表 
@@ -328,16 +361,19 @@ namespace WebApiNew.Model
             }
             if (!string.IsNullOrEmpty(fuzzyFilter))
             {
-                JObject SQLWorkOrderFileds = AppSetting.TableFileds.SelectToken("SQLWorkOrderFiled").ToObject<JObject>();
-                foreach (var item in SQLWorkOrderFileds)
+                var SQLWorkOrderFileds = AppSetting.TableFileds.GetValue("SQLWorkOrderFiled").ToString();
+                var mJObj = JArray.Parse(SQLWorkOrderFileds);
+                foreach (var item in mJObj)
                 {
-                if (string.IsNullOrEmpty(fuzzyFilterText))
+                    JObject itemObj = item.ToObject<JObject>();
+                    string key = itemObj.First.First.Path;
+                    if (string.IsNullOrEmpty(fuzzyFilterText))
                     {
-                        fuzzyFilterText += " and ( Convert(varchar," + item.Key + ",120) like '%" + fuzzyFilter + "%'";
+                        fuzzyFilterText += " and ( Convert(varchar," + key + ",120) like '%" + fuzzyFilter + "%'";
                     }
                     else
                     {
-                        fuzzyFilterText += " or Convert(varchar," + item.Key + ",120) like '%" + fuzzyFilter + "%'";
+                        fuzzyFilterText += " or Convert(varchar," + key + ",120) like '%" + fuzzyFilter + "%'";
                     }
                 }
                 fuzzyFilterText += ")";

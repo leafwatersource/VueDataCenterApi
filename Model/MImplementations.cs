@@ -72,17 +72,43 @@ namespace WebApiNew.Model
             }
             DataTable table = new DataTable();
             //查看要查询数据库中的哪些列
-            JObject SQLWorkPlanFileds = AppSetting.TableFileds.SelectToken("SQLWorkPlanFiled").ToObject<JObject>();
+            var SQLWorkPlanFileds = AppSetting.TableFileds.GetValue("SQLWorkPlanFiled").ToString();
+            var mJObj = JArray.Parse(SQLWorkPlanFileds);
             string SQLWorkPlanFiled = "";
-            foreach (var item in SQLWorkPlanFileds)
+            foreach (var item in mJObj)
             {
+                JObject itemObj = item.ToObject<JObject>();
+                string key = itemObj.First.First.Path;
+                string type = itemObj.Last.Last.Value<string>();
                 if (string.IsNullOrEmpty(SQLWorkPlanFiled))
                 {
-                    SQLWorkPlanFiled += item.Key;
+                    if (type == "datetime")
+                    {
+                        SQLWorkPlanFiled += "CONVERT(varchar(100)," + key + ", 120) AS " + key;
+                    }
+                    else if (type == "date")
+                    {
+                        SQLWorkPlanFiled += "CONVERT(varchar(100)," + key + ", 111) AS " + key;
+                    }
+                    else
+                    {
+                        SQLWorkPlanFiled += key;
+                    }
                 }
                 else
                 {
-                    SQLWorkPlanFiled += "," + item.Key;
+                    if (type == "datetime")
+                    {
+                        SQLWorkPlanFiled += ",CONVERT(varchar(100)," + key + ", 120) AS " + key;
+                    }
+                    else if (type == "date")
+                    {
+                        SQLWorkPlanFiled += ",CONVERT(varchar(100)," + key + ", 111) AS " + key;
+                    }
+                    else
+                    {
+                        SQLWorkPlanFiled += "," + key;
+                    }
                 }
             }
             if (string.IsNullOrEmpty(Resource))
@@ -93,26 +119,30 @@ namespace WebApiNew.Model
             {
                 table = GetWorkPlanBars(PageSize, SQLWorkPlanFiled, " OperationID = '" + Resource + "' and BarID>'" + max + "'", ChangeModel, filter, fuzzyFilter);
             }
-            foreach (var item in SQLWorkPlanFileds)
+            foreach (var item in mJObj)
             {
-                table.Columns[item.Key].ColumnName = item.Value.Value<string>();
+                JObject itemObj = item.ToObject<JObject>();
+                string key = itemObj.First.First.Path;
+                string value = itemObj.First.First.Value<string>();
+                table.Columns[key].ColumnName = value;
             }
-            table.Columns.Add("temp", Type.GetType("System.Decimal"));
-            table.Columns.Add("temp1", Type.GetType("System.Decimal"));
-            for (int i = 0; i < table.Rows.Count; i++)
-            {
-                decimal productTime = Convert.ToDecimal(table.Rows[i][SQLWorkPlanFileds["RealWorkTime"].ToString()]) / 3600;
-                productTime = Math.Round(productTime, 2);
-                table.Rows[i]["temp"] = productTime;
-                decimal setupTime = Convert.ToDecimal(table.Rows[i][SQLWorkPlanFileds["setupTime"].ToString()]) / 60;
-                setupTime = Math.Round(setupTime, 2);
-                table.Rows[i]["temp1"] = setupTime;
-            }
-            table.Columns.Remove(SQLWorkPlanFileds["RealWorkTime"].ToString());
-            table.Columns["temp"].ColumnName = SQLWorkPlanFileds["RealWorkTime"].ToString();
-            table.Columns.Remove(SQLWorkPlanFileds["setupTime"].ToString());
-            table.Columns["temp1"].ColumnName = SQLWorkPlanFileds["setupTime"].ToString();
-            table.AcceptChanges();
+            //table.Columns.Add("temp", Type.GetType("System.Decimal"));
+            //table.Columns.Add("temp1", Type.GetType("System.Decimal"));
+            //for (int i = 0; i < table.Rows.Count; i++)
+            //{
+            //    var aaa = mJObj.Select<"RealWorkTime">;
+            //    decimal productTime = Convert.ToDecimal(table.Rows[i][SQLWorkPlanFileds["RealWorkTime"].ToString()]) / 3600;
+            //    productTime = Math.Round(productTime, 2);
+            //    table.Rows[i]["temp"] = productTime;
+            //    decimal setupTime = Convert.ToDecimal(table.Rows[i][SQLWorkPlanFileds["setupTime"].ToString()]) / 60;
+            //    setupTime = Math.Round(setupTime, 2);
+            //    table.Rows[i]["temp1"] = setupTime;
+            //}
+            //table.Columns.Remove(SQLWorkPlanFileds["RealWorkTime"].ToString());
+            //table.Columns["temp"].ColumnName = SQLWorkPlanFileds["RealWorkTime"].ToString();
+            //table.Columns.Remove(SQLWorkPlanFileds["setupTime"].ToString());
+            //table.Columns["temp1"].ColumnName = SQLWorkPlanFileds["setupTime"].ToString();
+            //table.AcceptChanges();
             JObject data = new JObject();
             data.Add("ImplementationData", JsonConvert.SerializeObject(table));
             data.Add("ImplementationCount", ResWorkCount(Resource, GroupName,ChangeModel,filter, fuzzyFilter));
@@ -164,18 +194,22 @@ namespace WebApiNew.Model
             }
             if (!string.IsNullOrEmpty(fuzzyFilter))
             {
-                JObject SQLWorkOrderFileds = AppSetting.TableFileds.SelectToken("SQLWorkPlanFiled").ToObject<JObject>();
-                foreach (var item in SQLWorkOrderFileds)
+
+                var SQLWorkPlanFileds = AppSetting.TableFileds.GetValue("SQLWorkPlanFiled").ToString();
+                var mJObj = JArray.Parse(SQLWorkPlanFileds);
+                foreach (var item in mJObj)
                 {
+                    JObject itemObj = item.ToObject<JObject>();
+                    string key = itemObj.First.First.Path;
                     if (string.IsNullOrEmpty(fuzzyFilterText))
                     {
-                        fuzzyFilterText += " and ( Convert(varchar," + item.Key + ",120) like '%" + fuzzyFilter + "%'";
+                        fuzzyFilterText += " and ( Convert(varchar," + key + ",120) like '%" + fuzzyFilter + "%'";
                     }
                     else
                     {
-                        fuzzyFilterText += " or Convert(varchar," + item.Key + ",120) like '%" + fuzzyFilter + "%'";
+                        fuzzyFilterText += " or Convert(varchar," + key + ",120) like '%" + fuzzyFilter + "%'";
                     }
-                }
+                } 
                 fuzzyFilterText += ")";
             }
             if (ChangeModel)
@@ -291,16 +325,20 @@ namespace WebApiNew.Model
             }
             if (!string.IsNullOrEmpty(fuzzyFilter))
             {
-                JObject SQLWorkOrderFileds = AppSetting.TableFileds.SelectToken("SQLWorkPlanFiled").ToObject<JObject>();
-                foreach (var item in SQLWorkOrderFileds)
+
+                var SQLWorkPlanFileds = AppSetting.TableFileds.GetValue("SQLWorkPlanFiled").ToString();
+                var mJObj = JArray.Parse(SQLWorkPlanFileds);
+                foreach (var item in mJObj)
                 {
+                    JObject itemObj = item.ToObject<JObject>();
+                    string key = itemObj.First.First.Path;
                     if (string.IsNullOrEmpty(fuzzyFilterText))
                     {
-                        fuzzyFilterText += " and ( Convert(varchar," + item.Key + ",120) like '%" + fuzzyFilter + "%'";
+                        fuzzyFilterText += " and ( Convert(varchar," + key + ",120) like '%" + fuzzyFilter + "%'";
                     }
                     else
                     {
-                        fuzzyFilterText += " or Convert(varchar," + item.Key + ",120) like '%" + fuzzyFilter + "%'";
+                        fuzzyFilterText += " or Convert(varchar," + key + ",120) like '%" + fuzzyFilter + "%'";
                     }
                 }
                 fuzzyFilterText += ")";

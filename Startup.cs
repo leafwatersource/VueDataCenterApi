@@ -11,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using WebApiNew.Middle;
 using WebApiNew.StaticFunc;
@@ -40,17 +41,25 @@ namespace WebApiNew
             XmlNode Pmsetting = document.SelectSingleNode("AppConfig").SelectSingleNode("PMSettings");
             XmlNodeList SettingList = Pmsetting.ChildNodes;
             string datasource = Connection.Attributes["datasource"].Value;
-            JObject temp;
+            List<JObject> temp;
             AppSetting.TableFileds = new JObject();
             foreach (XmlNode item in TableFiledsConfigList)
             {
                 XmlNodeList xl = item.ChildNodes;
-                temp = new JObject();
+                temp = new List<JObject>();
                 foreach (XmlNode filed in xl)
                 {
-                    temp.Add(filed.Name, filed.InnerText);
+                    JObject props = new JObject { {
+                        filed.Name,filed.InnerText
+                        },{ 
+                        "type",filed.Attributes["type"].Value
+                        } };
+                    //temp.Add(filed.Name, filed.InnerText);
+                    //temp.Add("type", filed.Attributes["type"].Value);
+                    temp.Append(props);
+                    temp.Add(props);
                 }
-                AppSetting.TableFileds.Add(item.Name.ToString(), temp);
+                AppSetting.TableFileds.Add(item.Name.ToString(), JsonConvert.SerializeObject(temp));
             }
 
             foreach (XmlNode item in ConnectionList)
