@@ -24,7 +24,7 @@ namespace WebApiNew.Middle
         public async Task Invoke(HttpContext httpContext)
         {
             string agent = httpContext.Request.Path.Value;
-            if (agent.IndexOf("/login") !=-1 || agent.IndexOf("LogOut") !=-1 || agent.IndexOf("UserMessage") != -1)
+            if (agent.IndexOf("/login") !=-1 || agent.IndexOf("LogOut") !=-1 || agent.IndexOf("UserMessage") != -1|| agent.IndexOf("HasLogin")!=-1)
             {
                 await _next(httpContext);
             }

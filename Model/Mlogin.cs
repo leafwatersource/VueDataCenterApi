@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using WebApiNew.PublicFunc;
@@ -217,7 +219,6 @@ namespace WebApiNew.Model
             user.UserPass = safePass;
             user.UserIpAdress = UserIpAdress;
             user.UserWeb = UserWeb;
-
             PMUser.EmpID = userName;
             PMUser.UserPass = safePass;
             PMUser.UserIpAdress = UserIpAdress;
@@ -319,6 +320,24 @@ namespace WebApiNew.Model
             ad.Dispose();
             cmd.Connection.Close();
             return table;
+        }
+        public JObject UserHasLogin(string empid,string userGuid)
+        {
+            
+            JObject data = new JObject();
+            SqlCommand cmd = PmConnections.CtrlCmd();
+            cmd.CommandText = "select count(empid) from wapUserstate where empID = '" + empid + "' and userGuid = '" + userGuid + "'";
+            int count = Convert.ToInt32(cmd.ExecuteScalar());
+            cmd.Connection.Close();
+            if (count==1)
+            {
+                data.Add("LoginStatus", 1);
+            }
+            else
+            {
+                data.Add("LoginStatus", 0);
+            }
+            return data;
         }
     }
 }

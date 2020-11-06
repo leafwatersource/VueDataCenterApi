@@ -96,4 +96,20 @@ namespace WebApiNew.Controllers
             return Ok(JsonConvert.SerializeObject(mlogin.GetUserMessage()));
         }
     }
+    [Route("/[controller]")]
+    [ApiController]
+    public class HasLogin : ControllerBase
+    {
+        /// <summary>
+        /// 判断用户是否是登录
+        /// </summary>
+        /// <param name="empid">账号</param>
+        /// <param name="userGuid">用户上次登录的token值</param>
+        /// <returns></returns>
+        [HttpPost]
+        public IActionResult Result([FromForm]string empid,[FromForm]string userGuid) {
+            Mlogin mlogin = new Mlogin();
+            return Ok(mlogin.UserHasLogin(empid,userGuid).ToString());
+        }
+    }
 }
