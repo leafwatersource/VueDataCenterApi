@@ -107,7 +107,8 @@ namespace WebApiNew.Controllers
         /// <param name="userGuid">用户上次登录的token值</param>
         /// <returns></returns>
         [HttpPost]
-        public IActionResult Result([FromForm]string empid,[FromForm]string userGuid) {
+        public IActionResult Result([FromForm]string empid,[FromForm]string userGuid)
+        {
             Mlogin mlogin = new Mlogin();
             return Ok(mlogin.UserHasLogin(empid,userGuid).ToString());
         }

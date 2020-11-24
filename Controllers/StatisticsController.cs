@@ -63,7 +63,7 @@ namespace WebApiNew.Controllers
 public class GetResList : ControllerBase
 {
     /// <summary>
-    /// 查询设备
+    /// 查询设备组下的所有设备
     /// </summary>
     /// <param name="viewId">设备组的id</param>
     /// <returns></returns>
@@ -82,6 +82,7 @@ public class GetResList : ControllerBase
 [ApiController]
 public class GetResDetail : ControllerBase
 {
+    //查询设备的统计信息
     public IActionResult Result([FromForm]string resName) {
         MStatistics mStatistics = new MStatistics();
         JObject data = new JObject {
@@ -96,12 +97,71 @@ public class GetResDetail : ControllerBase
 [ApiController]
 public class GetResGroupTable : ControllerBase
 {
-    public IActionResult Result([FromForm]string resList)
+    public IActionResult Result([FromForm] string resList)
     {
         MStatistics mStatistics = new MStatistics();
         JObject data = new JObject {
                 { "resGroupData", JsonConvert.SerializeObject(mStatistics.GetResGroupTable(resList)) },
             };
         return Ok(data.ToString());
+    }
+}
+
+
+[Route("/[controller]")]
+[ApiController]
+public class GetCurResProduct:ControllerBase
+{
+    [HttpPost]
+    public IActionResult Result([FromForm] string CurResName)
+    {
+        MStatistics mStatistics = new MStatistics();
+        decimal num =  mStatistics.GetCurResProduct(CurResName);
+        return Ok(num.ToString());
+    }
+}
+[Route("/[controller]")]
+[ApiController]
+public class GetProductFinish:ControllerBase
+{
+    /// <summary>
+    /// 设备达成率
+    /// </summary>
+    /// <param name="ResName">设备名称</param>
+    /// <param name="filterStartTime">搜索条件</param>
+    /// <returns></returns>
+    public IActionResult Result([FromForm]string ResName,[FromForm]string filterStartTime)
+    {
+        MStatistics mStatistics = new MStatistics();
+        return Ok(mStatistics.ProductFinish(ResName, filterStartTime).ToString());
+    } 
+}
+[Route("/[controller]")]
+[ApiController]
+public class GetDataShift:ControllerBase
+{
+    /// <summary>
+    /// 查询设备的班次
+    /// </summary>
+    /// <param name="ResName"></param>
+    /// <returns></returns>
+    public IActionResult Result([FromForm]string ResName,[FromForm]string startTime,[FromForm]string endTime)
+    {
+        MStatistics mStatistics = new MStatistics();
+        return Ok(mStatistics.Dayshift(ResName,startTime,endTime).ToString());
+    }
+}
+[Route("/[controller]")]
+[ApiController]
+public class GetResEventData : ControllerBase
+{
+    /// <summary>
+    /// 查询点击的设备的事件操作记录
+    /// </summary>
+    /// <param name="ResName"></param>
+    /// <returns></returns>
+    public IActionResult Result([FromForm]string ResName)
+    {
+        return Ok("hello");
     }
 }

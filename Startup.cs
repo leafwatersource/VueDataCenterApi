@@ -1,5 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Xml;
@@ -51,7 +54,7 @@ namespace WebApiNew
                 {
                     JObject props = new JObject { {
                         filed.Name,filed.InnerText
-                        },{ 
+                        },{
                         "type",filed.Attributes["type"].Value
                         } };
                     //temp.Add(filed.Name, filed.InnerText);
@@ -90,6 +93,7 @@ namespace WebApiNew
                     PMUser.PMOcState = item.InnerText;
                 }
             }
+            RenderMapResTable();
         }
         public IConfiguration Configuration { get; }
 
@@ -108,7 +112,7 @@ namespace WebApiNew
                 });
             });
             services.AddControllers();
-            
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -120,17 +124,104 @@ namespace WebApiNew
             }
 
             app.UseHttpsRedirection();
-            
+
             app.UseCors("any");
-          
+
             app.UseRouting();
             app.UseMiddleware<HasLoginMiddleware>();
             app.UseAuthorization();
-           
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
             });
+        }
+
+        public void RenderMapResTable()
+        {
+            string filepach = AppContext.BaseDirectory;
+            XmlDocument xmlDoc = new XmlDocument();
+            DataTable MapResTable = new DataTable();
+            SqlCommand cmd = PmConnections.SchCmd();
+            cmd.CommandText = "select distinct(eventtype) from wapMesEventRec";
+            SqlDataAdapter ad = new SqlDataAdapter(cmd);
+            ad.Fill(MapResTable);
+            cmd.Connection.Close(); 
+            if (File.Exists(filepach + "MapResTable.xml")) {
+                XmlDocument document = new XmlDocument();
+                document.Load(filepach + "MapResTable.xml");
+                var root = document.SelectSingleNode("Root");
+                XmlNode MAPTABLE = root.SelectSingleNode("MAPTABLE");
+                var resCount = Math.Floor(Math.Sqrt(MAPTABLE.ChildNodes.Count));
+                if (resCount != MapResTable.Rows.Count)
+                {
+                    root.RemoveChild(MAPTABLE);
+                    SetMapResXML(xmlDoc, MapResTable);
+                }
+            }
+            else
+            {
+                SetMapResXML(xmlDoc, MapResTable);
+            }
+            SetMapResTable();
+        }
+        public void SetMapResTable()
+        {
+            string filepach = AppContext.BaseDirectory;
+            XmlDocument document = new XmlDocument();
+            document.Load(filepach + "MapResTable.xml");
+            var MAPTABLE = document.SelectSingleNode("Root").SelectSingleNode("MAPTABLE").ChildNodes;
+            AppSetting.MapResTable = new DataTable();
+            AppSetting.MapResTable.Columns.Add("curEventType");
+            AppSetting.MapResTable.Columns.Add("nextEventType");
+            AppSetting.MapResTable.Columns.Add("effective");
+            foreach (XmlNode item in MAPTABLE)
+            {
+                DataRow row = AppSetting.MapResTable.NewRow();
+                row["curEventType"] = item.Attributes["curEventType"].Value;
+                row["nextEventType"] = item.Attributes["nextEventType"].Value;
+                row["effective"] = item.Attributes["effective"].Value;
+                AppSetting.MapResTable.Rows.Add(row);
+            }
+        }
+        public void SetMapResXML(XmlDocument xmlDoc,DataTable MapResTable) {
+            string filepach = AppContext.BaseDirectory;
+            XmlNode node = xmlDoc.CreateXmlDeclaration("1.0", "utf-8", "");
+            xmlDoc.AppendChild(node);
+            XmlNode root = xmlDoc.CreateElement("Root");
+            XmlNode MAPTABLE = xmlDoc.CreateElement("MAPTABLE");
+            root.AppendChild(MAPTABLE);
+            xmlDoc.AppendChild(root);
+            foreach (DataRow item in MapResTable.Rows)
+            {
+                foreach (DataRow nextItem in MapResTable.Rows)
+                {
+                    XmlNode COLUMN = xmlDoc.CreateElement("COLUMN");
+                    COLUMN.Attributes.Append(CreateAttribute(COLUMN, "curEventType", item[0].ToString()));
+                    COLUMN.Attributes.Append(CreateAttribute(COLUMN, "nextEventType", nextItem[0].ToString()));
+                    COLUMN.Attributes.Append(CreateAttribute(COLUMN, "effective", "false"));
+                    MAPTABLE.AppendChild(COLUMN);
+                }
+            }
+
+            xmlDoc.Save(filepach + "MapResTable.xml");
+        }
+        public XmlAttribute CreateAttribute(XmlNode node, string attributeName, string value)
+        {
+            try
+            {
+                XmlDocument doc = node.OwnerDocument;
+                XmlAttribute attr = null;
+                attr = doc.CreateAttribute(attributeName);
+                attr.Value = value;
+                node.Attributes.SetNamedItem(attr);
+                return attr;
+            }
+            catch (Exception err)
+            {
+                string desc = err.Message;
+                return null;
+            }
         }
     }
 }

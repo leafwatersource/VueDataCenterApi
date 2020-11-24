@@ -126,23 +126,6 @@ namespace WebApiNew.Model
                 string value = itemObj.First.First.Value<string>();
                 table.Columns[key].ColumnName = value;
             }
-            //table.Columns.Add("temp", Type.GetType("System.Decimal"));
-            //table.Columns.Add("temp1", Type.GetType("System.Decimal"));
-            //for (int i = 0; i < table.Rows.Count; i++)
-            //{
-            //    var aaa = mJObj.Select<"RealWorkTime">;
-            //    decimal productTime = Convert.ToDecimal(table.Rows[i][SQLWorkPlanFileds["RealWorkTime"].ToString()]) / 3600;
-            //    productTime = Math.Round(productTime, 2);
-            //    table.Rows[i]["temp"] = productTime;
-            //    decimal setupTime = Convert.ToDecimal(table.Rows[i][SQLWorkPlanFileds["setupTime"].ToString()]) / 60;
-            //    setupTime = Math.Round(setupTime, 2);
-            //    table.Rows[i]["temp1"] = setupTime;
-            //}
-            //table.Columns.Remove(SQLWorkPlanFileds["RealWorkTime"].ToString());
-            //table.Columns["temp"].ColumnName = SQLWorkPlanFileds["RealWorkTime"].ToString();
-            //table.Columns.Remove(SQLWorkPlanFileds["setupTime"].ToString());
-            //table.Columns["temp1"].ColumnName = SQLWorkPlanFileds["setupTime"].ToString();
-            //table.AcceptChanges();
             JObject data = new JObject();
             data.Add("ImplementationData", JsonConvert.SerializeObject(table));
             data.Add("ImplementationCount", ResWorkCount(Resource, GroupName,ChangeModel,filter, fuzzyFilter));

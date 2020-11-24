@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using OfficeOpenXml.ConditionalFormatting;
 using System;
 using System.Collections.Generic;
@@ -30,7 +31,7 @@ namespace WebApiNew.Model
             DataTable table = new DataTable();
             //PMS_WorkPlans
             SqlCommand cmd = PmConnections.SchCmd();
-            cmd.CommandText = "select WorkPlanID from PMS_WorkPlans where Status = 'Released' and sysID='"+PMUser.UserSysID+ "' order by planReleaseTime";
+            cmd.CommandText = "select WorkPlanID from PMS_WorkPlans where Status = 'Released' and sysID='" + PMUser.UserSysID + "' order by planReleaseTime";
             SqlDataAdapter ad = new SqlDataAdapter(cmd);
             ad.Fill(table);
             ad.Dispose();
@@ -124,9 +125,6 @@ namespace WebApiNew.Model
                 }
                 if (resbean.Resorderbean != null)
                 {
-
-
-
                     //如果不是空值,就得查询设备利用率
                     //先获取设备的开始工作时间
                     DataRow[] drse = dtrescal.Select("ResourceName = '" + resbean.Resname + "' and ResCalStartTime <= '" + DateTime.Now + "' and ResCalEndTime >= '" + DateTime.Now + "'");
@@ -158,114 +156,6 @@ namespace WebApiNew.Model
                         //定义生产工时变量
                         DateTime orderOutputStartTime, orderOutputEndTime;
                         decimal orderOutputMinutes;
-
-
-                        //for (int i = 0; i < dtresrec.Rows.Count; i++)
-                        //{
-                        //    switch (dtresrec.Rows[i]["EventType"].ToString())
-                        //    {
-                        //        case "RD":
-                        //            if( i == 0)
-                        //            {
-                        //                //设备有异常
-                        //                resStopStartTime = Convert.ToDateTime(dtresrec.Rows[i]["EventTime"]);
-                        //            }
-                        //            else
-                        //            {
-
-                        //            }
-                        //            continue;
-
-                        //        case "RN":
-                        //            if (i == 0)
-                        //            {
-
-                        //            }
-                        //            else
-                        //            {
-
-                        //            }
-                        //            continue;
-
-                        //        case "EW":
-                        //            if (i == 0)
-                        //            {
-
-                        //            }
-                        //            else
-                        //            {
-
-                        //            }
-                        //            continue;
-
-                        //        case "E":
-                        //            if (i == 0)
-                        //            {
-
-                        //            }
-                        //            else
-                        //            {
-
-                        //            }
-                        //            continue;
-
-                        //        case "S":
-                        //            if (i == 0)
-                        //            {
-
-                        //            }
-                        //            else
-                        //            {
-
-                        //            }
-                        //            continue;
-
-                        //        case "D":
-                        //            if (i == 0)
-                        //            {
-
-                        //            }
-                        //            else
-                        //            {
-
-                        //            }
-                        //            continue;
-
-                        //        case "P":
-                        //            if (i == 0)
-                        //            {
-
-                        //            }
-                        //            else
-                        //            {
-
-                        //            }
-                        //            continue;
-
-                        //        case "U":
-                        //            if (i == 0)
-                        //            {
-
-                        //            }
-                        //            else
-                        //            {
-
-                        //            }
-                        //            continue;
-
-                        //        case "R":
-                        //            if (i == 0)
-                        //            {
-
-                        //            }
-                        //            else
-                        //            {
-
-                        //            }
-                        //            continue;
-                        //    }                            
-                        //}
-
                     }
 
                 }
@@ -273,21 +163,22 @@ namespace WebApiNew.Model
             }
             return dashresbeans;
         }
-        public DataTable GetResData(string resName,string timeType)
+        public DataTable GetResData(string resName, string timeType)
         {
             DataTable table = new DataTable();
             SqlCommand cmd = PmConnections.SchCmd();
-            cmd.CommandText = "select resname,timeType,fromDay,toDay,resNeedHour,resWorkHour,hourRatio from stsResWorkHour where workPlanID = '"+GetWorkPlanID()+"' and timeType = '" + timeType + "' and resname = '"+resName+"'";
+            cmd.CommandText = "select resname,timeType,fromDay,toDay,resNeedHour,resWorkHour,hourRatio from stsResWorkHour where workPlanID = '" + GetWorkPlanID() + "' and timeType = '" + timeType + "' and resname = '" + resName + "'";
             SqlDataAdapter ad = new SqlDataAdapter(cmd);
             ad.Fill(table);
             ad.Dispose();
             cmd.Connection.Close();
             return table;
         }
-        public DataTable GetResGroup() {
+        public DataTable GetResGroup()
+        {
             DataTable table = new DataTable();
             SqlCommand cmd = PmConnections.SchCmd();
-            cmd.CommandText = "select ViewID,ViewName from PMS_Views where VGlobal != 'system' and sysID = '"+ PMUser.UserSysID + "'";
+            cmd.CommandText = "select ViewID,ViewName from PMS_Views where VGlobal != 'system' and sysID = '" + PMUser.UserSysID + "'";
             SqlDataAdapter ad = new SqlDataAdapter(cmd);
             ad.Fill(table);
             ad.Dispose();
@@ -295,7 +186,8 @@ namespace WebApiNew.Model
             return table;
         }
 
-        public DataTable GetResList(string viewID) {
+        public DataTable GetResList(string viewID)
+        {
             //查询设备组下的所有的设备
             DataTable table = new DataTable();
             SqlCommand cmd = PmConnections.SchCmd();
@@ -310,7 +202,7 @@ namespace WebApiNew.Model
         {
             DataTable table = new DataTable();
             SqlCommand cmd = PmConnections.SchCmd();
-            cmd.CommandText = "select resName,fromDay,toDay,resNeedHour,resWorkHour,hourRatio,pmUID from stsResWorkHour where  workPlanID = '"+GetWorkPlanID()+"' and timeType = 'W' and resName='" + resName + "'";
+            cmd.CommandText = "select resName,fromDay,toDay,resNeedHour,resWorkHour,hourRatio,pmUID from stsResWorkHour where  workPlanID = '" + GetWorkPlanID() + "' and timeType = 'W' and resName='" + resName + "'";
             SqlDataAdapter ad = new SqlDataAdapter(cmd);
             ad.Fill(table);
             ad.Dispose();
@@ -329,7 +221,7 @@ namespace WebApiNew.Model
                     string aaa = item;
                     if (string.IsNullOrEmpty(columns))
                     {
-                        columns += "'"+item+"'";
+                        columns += "'" + item + "'";
                     }
                     else
                     {
@@ -337,13 +229,170 @@ namespace WebApiNew.Model
                     }
                 }
                 SqlCommand cmd = PmConnections.SchCmd();
-                cmd.CommandText = "select resName,fromDay,toDay,resNeedHour,resWorkHour,hourRatio,pmUID from stsResWorkHour  where  workPlanID = '"+GetWorkPlanID()+"' and timeType = 'W' and resName in(" + columns + ") order by resName";
+                cmd.CommandText = "select resName,fromDay,toDay,resNeedHour,resWorkHour,hourRatio,pmUID from stsResWorkHour  where  workPlanID = '" + GetWorkPlanID() + "' and timeType = 'W' and resName in(" + columns + ") order by resName";
                 SqlDataAdapter ad = new SqlDataAdapter(cmd);
                 ad.Fill(table);
                 ad.Dispose();
                 cmd.Connection.Close();
             }
             return table;
+        }
+        /// <summary>
+        /// 设备负载率
+        /// </summary>
+        /// <param name="curRes">设备名称</param>
+        /// <returns></returns>
+        public decimal GetCurResProduct(string curRes)
+        {
+            //planTable
+            DataTable planTable = new DataTable();
+            TimeSpan planHour;
+            SqlCommand cmd = PmConnections.SchCmd();
+            cmd.CommandText = "select ResCalStartTime,ResCalEndTime from wapResCalendar where ResourceName = '" + curRes + "' and '" + DateTime.Now + "' >= ResCalStartTime and '" + DateTime.Now + "' < ResCalEndTime";
+            SqlDataAdapter ad = new SqlDataAdapter(cmd);
+            ad.Fill(planTable);
+            ad.Dispose();
+            planHour = DateTime.Now - Convert.ToDateTime(planTable.Rows[0][0]);
+            DataTable MesTable = new DataTable();
+            cmd.CommandText = "select EventType,EventTime from wapMesEventRec where ResName = '" + curRes + "' and MesDate = '" + DateTime.Now.AddDays(0).ToShortDateString()+"'";
+            SqlDataAdapter MesAd = new SqlDataAdapter(cmd);
+            MesAd.Fill(MesTable);
+
+            cmd.Connection.Close();
+            TimeSpan MesHour = new TimeSpan(0);
+            for (int i = 0; i < MesTable.Rows.Count; i++)
+            {
+                if (i!= MesTable.Rows.Count-1)
+                {
+                    string CurEventType = MesTable.Rows[i][0].ToString();
+                    string nextEventType = MesTable.Rows[i + 1][0].ToString();
+                    for (int j = 0; j < AppSetting.MapResTable.Rows.Count; j++)
+                    {
+                        if (AppSetting.MapResTable.Rows[j][0].ToString() == CurEventType && AppSetting.MapResTable.Rows[j][1].ToString() == nextEventType)
+                        {
+                            //有效工时
+                            if (Convert.ToBoolean(AppSetting.MapResTable.Rows[j][2]))
+                            {
+                                if (MesHour == new TimeSpan(0))
+                                {
+                                    MesHour = Convert.ToDateTime(MesTable.Rows[i + 1][1]) - Convert.ToDateTime(MesTable.Rows[i][1]);
+                                }
+                                else
+                                {
+                                    MesHour += Convert.ToDateTime(MesTable.Rows[i + 1][1]) - Convert.ToDateTime(MesTable.Rows[i][1]);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return decimal.Round(Convert.ToDecimal(MesHour / planHour) * 100, 2);
+        }
+        /// <summary>
+        /// 获取设备达成率
+        /// </summary>
+        /// <param name="ResName">设备名称</param>
+        /// <param name="filterStartTime">筛选条件</param>
+        /// <returns></returns>
+        public decimal ProductFinish(string ResName, string filterStartTime) {
+            decimal ResFinishNum = 0;
+            DataTable MesTable = new DataTable();
+            SqlCommand cmd = PmConnections.SchCmd();
+            cmd.CommandText = "select * from wapMesEventRec where ResName='" + ResName + "' and MesDate='" + DateTime.Now.ToShortDateString() + "' and DayShift='1' order by EventTime";
+            SqlDataAdapter ad = new SqlDataAdapter(cmd);
+            ad.Fill(MesTable);
+            ad.Dispose();
+            double MesHour = 0;
+            decimal FinishNum = 0;
+            for (int i = 0; i < MesTable.Rows.Count; i++)
+            {
+                FinishNum += Convert.ToDecimal(MesTable.Rows[i]["FinishedQty"]);
+                if (i != MesTable.Rows.Count - 1)
+                {
+                    DataRow[] row = AppSetting.MapResTable.Select("curEventType='" + MesTable.Rows[i]["EventType"] + "' and nextEventType='" + MesTable.Rows[i + 1]["EventType"] + "'");
+                    if (Convert.ToBoolean(row[0]["effective"]))
+                    {
+                        DateTime end = Convert.ToDateTime(MesTable.Rows[i + 1]["EventTime"]);
+                        DateTime start = Convert.ToDateTime(MesTable.Rows[i]["EventTime"]);
+                        MesHour = (end - start).TotalSeconds;
+                    }
+                }
+            }
+            decimal Mesnum;
+            if (FinishNum == 0 || MesHour == 0)
+            {
+                Mesnum = 0;
+            }
+            else
+            {
+                Mesnum = FinishNum / Convert.ToDecimal(MesHour);
+            }
+            DataTable PlanTable = new DataTable();
+            cmd.CommandText = "Select * from User_MesDailyData where dailyDate='" + DateTime.Now.ToShortDateString() + "' and pmResName='" + ResName + "' and dayShift='1'";
+            SqlDataAdapter PlanAd = new SqlDataAdapter(cmd);
+            PlanAd.Fill(PlanTable);
+            PlanAd.Dispose();
+            decimal planQty = 0;
+            decimal planHour = 0;
+            foreach (DataRow row in PlanTable.Rows)
+            {
+                planQty += Convert.ToDecimal(row["finishedQty"]);
+                planHour += Convert.ToDecimal(row["workHour"]) * 3600;
+            }
+            decimal PlanNum = 0;
+            if (planQty == 0|| planHour==0)
+            {
+                PlanNum = 0;
+            }
+            else
+            {
+                PlanNum = planQty / planHour;
+            }
+            if (Mesnum==0 || PlanNum==0)
+            {
+                ResFinishNum = 0;
+            }
+            else
+            {
+                ResFinishNum = decimal.Round(Mesnum / PlanNum * 100, 2);
+            }
+            return ResFinishNum;
+        }
+        public JObject Dayshift(string resName,string startTime,string endTime)
+        {
+            //默认时间是当前的日期
+            string now = null;
+            string time = null;
+            if (string.IsNullOrEmpty(startTime))
+            {
+                now = DateTime.Now.ToShortDateString();
+                time = DateTime.Now.ToShortTimeString();
+            }
+            else
+            {
+                now = Convert.ToDateTime(startTime).ToShortDateString();
+                time = Convert.ToDateTime(startTime).ToShortTimeString();
+            }
+            int curdayshift = 0;
+            DataTable table = new DataTable();
+            SqlCommand cmd = PmConnections.SchCmd();
+            cmd.CommandText = "select CONVERT(varchar(100),ResCalStartTime,120) as ResCalStartTime,CONVERT(varchar(100),ResCalEndTime,120) as ResCalEndTime, ResCalShift from wapResCalendar where ResourceName='" + resName+ "' and ResCalDate='"+ now+"'";
+            SqlDataAdapter ad = new SqlDataAdapter(cmd);
+            ad.Fill(table);
+            cmd.Connection.Close();
+            foreach (DataRow row in table.Rows)
+            {
+                if (Convert.ToDateTime(row["ResCalStartTime"]) <= DateTime.Now && Convert.ToDateTime(row["ResCalEndTime"]) >=  DateTime.Now)
+                {
+                    curdayshift = Convert.ToInt32(row["ResCalShift"]);
+                }
+            }
+            JObject data = new JObject
+            {
+                { "curdayshift", curdayshift},
+                { "dayShift",JsonConvert.SerializeObject(table)}
+             };
+            return data;
         }
     }
 }
