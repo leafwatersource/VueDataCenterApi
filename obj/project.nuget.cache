@@ -1,11 +1,14 @@
 {
   "version": 2,
-  "dgSpecHash": "0dmKP+h9eMGzIH86gtlqWqTjibf3MnelEvQlSe2tPmAQ3vZ1yB8YpklVWnDZ6hcMZAWUw1hn7FWU+CXlayzkSw==",
+  "dgSpecHash": "x0krI9kfvbyvNsizYanWmns/+cC/cCsaU97/h3LdJNhDJPgF1m3cRJIL398XNncq1r5mTIosoE7s3F7X1PXWdg==",
   "success": true,
   "projectFilePath": "C:\\Users\\Mr.Ye\\Desktop\\WebApiNew\\WebApiNew.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\Mr.Ye\\.nuget\\packages\\dotnetcore.npoi\\1.2.3\\dotnetcore.npoi.1.2.3.nupkg.sha512",
+    "C:\\Users\\Mr.Ye\\.nuget\\packages\\dotnetcore.npoi.core\\1.2.3\\dotnetcore.npoi.core.1.2.3.nupkg.sha512",
+    "C:\\Users\\Mr.Ye\\.nuget\\packages\\dotnetcore.npoi.openxml4net\\1.2.3\\dotnetcore.npoi.openxml4net.1.2.3.nupkg.sha512",
+    "C:\\Users\\Mr.Ye\\.nuget\\packages\\dotnetcore.npoi.openxmlformats\\1.2.3\\dotnetcore.npoi.openxmlformats.1.2.3.nupkg.sha512",
     "C:\\Users\\Mr.Ye\\.nuget\\packages\\epplus\\5.4.0\\epplus.5.4.0.nupkg.sha512",
-    "C:\\Users\\Mr.Ye\\.nuget\\packages\\intercom.dotnet.client\\2.1.1\\intercom.dotnet.client.2.1.1.nupkg.sha512",
     "C:\\Users\\Mr.Ye\\.nuget\\packages\\microsoft.extensions.configuration\\3.1.5\\microsoft.extensions.configuration.3.1.5.nupkg.sha512",
     "C:\\Users\\Mr.Ye\\.nuget\\packages\\microsoft.extensions.configuration.abstractions\\3.1.5\\microsoft.extensions.configuration.abstractions.3.1.5.nupkg.sha512",
     "C:\\Users\\Mr.Ye\\.nuget\\packages\\microsoft.extensions.configuration.fileextensions\\3.1.5\\microsoft.extensions.configuration.fileextensions.3.1.5.nupkg.sha512",
@@ -38,6 +41,7 @@
     "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder\\runtime.win-arm64.runtime.native.system.data.sqlclient.sni\\4.4.0\\runtime.win-arm64.runtime.native.system.data.sqlclient.sni.4.4.0.nupkg.sha512",
     "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder\\runtime.win-x64.runtime.native.system.data.sqlclient.sni\\4.4.0\\runtime.win-x64.runtime.native.system.data.sqlclient.sni.4.4.0.nupkg.sha512",
     "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder\\runtime.win-x86.runtime.native.system.data.sqlclient.sni\\4.4.0\\runtime.win-x86.runtime.native.system.data.sqlclient.sni.4.4.0.nupkg.sha512",
+    "C:\\Users\\Mr.Ye\\.nuget\\packages\\sharpziplib\\1.2.0\\sharpziplib.1.2.0.nupkg.sha512",
     "C:\\Users\\Mr.Ye\\.nuget\\packages\\system.collections\\4.3.0\\system.collections.4.3.0.nupkg.sha512",
     "C:\\Users\\Mr.Ye\\.nuget\\packages\\system.collections.concurrent\\4.3.0\\system.collections.concurrent.4.3.0.nupkg.sha512",
     "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder\\system.collections.nongeneric\\4.3.0\\system.collections.nongeneric.4.3.0.nupkg.sha512",
@@ -92,16 +96,5 @@
     "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder\\system.xml.xpath\\4.3.0\\system.xml.xpath.4.3.0.nupkg.sha512",
     "C:\\Users\\Mr.Ye\\.nuget\\packages\\system.xml.xpath.xmldocument\\4.3.0\\system.xml.xpath.xmldocument.4.3.0.nupkg.sha512"
   ],
-  "logs": [
-    {
-      "code": "NU1701",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "已使用“.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8”而不是项目目标框架“.NETCoreApp,Version=v3.1”还原包“Intercom.Dotnet.Client 2.1.1”。此包可能与项目不完全兼容。",
-      "libraryId": "Intercom.Dotnet.Client",
-      "targetGraphs": [
-        ".NETCoreApp,Version=v3.1"
-      ]
-    }
-  ]
+  "logs": []
 }

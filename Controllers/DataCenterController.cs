@@ -22,11 +22,11 @@ namespace WebApiNew.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        public IActionResult Result([FromForm]string PageSize,[FromForm]string CurPage,[FromForm]string filter,[FromForm]string fuzzyFilter,[FromForm]string workType)
+        public IActionResult Result([FromForm] string PageSize, [FromForm] string CurPage, [FromForm] string filter, [FromForm] string fuzzyFilter, [FromForm] string workType, [FromForm] string filterFirstDemandDay)
         {
             MdataCenter mdataCenter = new MdataCenter();
-            DataTable dt = mdataCenter.WorkOrderData(PageSize, CurPage, filter, fuzzyFilter, workType);
-            int total = mdataCenter.GetOrderCount(filter, fuzzyFilter, workType);
+            DataTable dt = mdataCenter.WorkOrderData(PageSize, CurPage, filter, fuzzyFilter, workType, filterFirstDemandDay);
+            int total = mdataCenter.GetOrderCount(filter, fuzzyFilter, workType, filterFirstDemandDay);
             JObject data = new JObject {
                 { "code", "0"},
                 { "data", JsonConvert.SerializeObject(dt)},
@@ -38,7 +38,7 @@ namespace WebApiNew.Controllers
     }
     [Route("/[controller]")]
     [ApiController]
-    public class PlanMessage:ControllerBase
+    public class PlanMessage : ControllerBase
     {
         /// <summary>
         /// 获取的是工单的描述
@@ -61,10 +61,10 @@ namespace WebApiNew.Controllers
     [ApiController]
     public class GetPercentage : ControllerBase
     {
-     /// <summary>
-    /// 数据中心的百分比，和四个数字值
-    /// </summary>
-    /// <returns></returns>
+        /// <summary>
+        /// 数据中心的百分比，和四个数字值
+        /// </summary>
+        /// <returns></returns>
         [HttpPost]
         public IActionResult Result()
         {
@@ -80,6 +80,21 @@ namespace WebApiNew.Controllers
             result.Add("OnTimePercentage", mdataCenter.OnTimePercentage);
             result.Add("LatePercentage", mdataCenter.LatePercentage);
             return Ok(result.ToString());
+        }
+    }
+    [Route("/[controller]")]
+    [ApiController]
+    public class GetAllOP : ControllerBase
+    {
+        /// <summary>
+        /// 根据传来的工单号码搜索工单下所有的工序的进度
+        /// </summary>
+        /// <param name="workID">工单号码</param>
+        /// <returns></returns>
+        public IActionResult Result([FromForm] string workID) {
+            MdataCenter mdataCenter = new MdataCenter();
+            DataTable table = mdataCenter.GetOPData(workID);
+            return Ok(JsonConvert.SerializeObject(table));
         }
     }
 }

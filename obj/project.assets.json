@@ -2,6 +2,66 @@
   "version": 3,
   "targets": {
     ".NETCoreApp,Version=v3.1": {
+      "DotNetCore.NPOI/1.2.3": {
+        "type": "package",
+        "dependencies": {
+          "DotNetCore.NPOI.Core": "1.2.3",
+          "DotNetCore.NPOI.OpenXml4Net": "1.2.3",
+          "DotNetCore.NPOI.OpenXmlFormats": "1.2.3"
+        },
+        "compile": {
+          "lib/netstandard2.0/NPOI.OOXML.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/NPOI.OOXML.dll": {}
+        },
+        "contentFiles": {
+          "contentFiles/any/netstandard2.0/NOTICE.TXT": {
+            "buildAction": "Content",
+            "codeLanguage": "any",
+            "copyToOutput": true,
+            "outputPath": "NOTICE.TXT"
+          }
+        }
+      },
+      "DotNetCore.NPOI.Core/1.2.3": {
+        "type": "package",
+        "dependencies": {
+          "SharpZipLib": "1.2.0",
+          "System.Drawing.Common": "4.5.0",
+          "System.Text.Encoding.CodePages": "4.5.0"
+        },
+        "compile": {
+          "lib/netstandard2.0/NPOI.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/NPOI.dll": {}
+        }
+      },
+      "DotNetCore.NPOI.OpenXml4Net/1.2.3": {
+        "type": "package",
+        "dependencies": {
+          "DotNetCore.NPOI.Core": "1.2.3"
+        },
+        "compile": {
+          "lib/netstandard2.0/NPOI.OpenXml4Net.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/NPOI.OpenXml4Net.dll": {}
+        }
+      },
+      "DotNetCore.NPOI.OpenXmlFormats/1.2.3": {
+        "type": "package",
+        "dependencies": {
+          "DotNetCore.NPOI.OpenXml4Net": "1.2.3"
+        },
+        "compile": {
+          "lib/netstandard2.0/NPOI.OpenXmlFormats.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/NPOI.OpenXmlFormats.dll": {}
+        }
+      },
       "EPPlus/5.4.0": {
         "type": "package",
         "dependencies": {
@@ -23,15 +83,6 @@
         },
         "runtime": {
           "lib/netstandard2.1/EPPlus.dll": {}
-        }
-      },
-      "Intercom.Dotnet.Client/2.1.1": {
-        "type": "package",
-        "compile": {
-          "lib/net452/Intercom.dll": {}
-        },
-        "runtime": {
-          "lib/net452/Intercom.dll": {}
         }
       },
       "Microsoft.Extensions.Configuration/3.1.5": {
@@ -386,6 +437,15 @@
             "assetType": "native",
             "rid": "win-x86"
           }
+        }
+      },
+      "SharpZipLib/1.2.0": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/ICSharpCode.SharpZipLib.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/ICSharpCode.SharpZipLib.dll": {}
         }
       },
       "System.Collections/4.3.0": {
@@ -1302,6 +1362,61 @@
     }
   },
   "libraries": {
+    "DotNetCore.NPOI/1.2.3": {
+      "sha512": "agXbYDkOvovMYBNqTcRAr6jrTtUXGYzVNdS9Yxy4PDZa8tBQiIeAD+54/Jdsc+3/Mln1L1Yj+SciO1TYwljcdQ==",
+      "type": "package",
+      "path": "dotnetcore.npoi/1.2.3",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "content/NOTICE.TXT",
+        "contentFiles/any/net461/NOTICE.TXT",
+        "contentFiles/any/netstandard2.0/NOTICE.TXT",
+        "dotnetcore.npoi.1.2.3.nupkg.sha512",
+        "dotnetcore.npoi.nuspec",
+        "lib/net461/NPOI.OOXML.dll",
+        "lib/netstandard2.0/NPOI.OOXML.dll"
+      ]
+    },
+    "DotNetCore.NPOI.Core/1.2.3": {
+      "sha512": "2OgRNy4OpVOIwnkU8KPJs6itTE2xFpIFkFmci/iAnea/ZPTzQJrmuNPVKlfdn1csOI8ecFWES8Tk2ZmRSJjl5w==",
+      "type": "package",
+      "path": "dotnetcore.npoi.core/1.2.3",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "dotnetcore.npoi.core.1.2.3.nupkg.sha512",
+        "dotnetcore.npoi.core.nuspec",
+        "lib/net461/NPOI.dll",
+        "lib/netstandard2.0/NPOI.dll"
+      ]
+    },
+    "DotNetCore.NPOI.OpenXml4Net/1.2.3": {
+      "sha512": "gELhZln7TuLn2he3r0mx1qnuPLjEgTW5z8RTFnEexSQ+r1smDqSSryXNEhwUvj1beBUxTjKq2RrwkrWwLgtScA==",
+      "type": "package",
+      "path": "dotnetcore.npoi.openxml4net/1.2.3",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "dotnetcore.npoi.openxml4net.1.2.3.nupkg.sha512",
+        "dotnetcore.npoi.openxml4net.nuspec",
+        "lib/net461/NPOI.OpenXml4Net.dll",
+        "lib/netstandard2.0/NPOI.OpenXml4Net.dll"
+      ]
+    },
+    "DotNetCore.NPOI.OpenXmlFormats/1.2.3": {
+      "sha512": "3v0cJA+4rclcoW+hVuU4oYu1wNYv/jEIqQghLDMHqlviyOVxnuruAUDvsgENjiZM0iWFhkK0N/ZsXvH+qGvObw==",
+      "type": "package",
+      "path": "dotnetcore.npoi.openxmlformats/1.2.3",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "dotnetcore.npoi.openxmlformats.1.2.3.nupkg.sha512",
+        "dotnetcore.npoi.openxmlformats.nuspec",
+        "lib/net461/NPOI.OpenXmlFormats.dll",
+        "lib/netstandard2.0/NPOI.OpenXmlFormats.dll"
+      ]
+    },
     "EPPlus/5.4.0": {
       "sha512": "JMgS03PHMhOmnVdRdE0gsycuVjt54jdP1Yy1Y4mszQxRC19Upoz/o/ie3SwfLoU/zxtA+HWwHw7KJ6Uc5et72A==",
       "type": "package",
@@ -1324,19 +1439,6 @@
         "lib/netstandard2.1/EPPlus.xml",
         "license.md",
         "readme.txt"
-      ]
-    },
-    "Intercom.Dotnet.Client/2.1.1": {
-      "sha512": "/HOK6Mf8BEnJDLSTF8qzClcTYg3j8Cs8NNxxYfjutOnriygu3aN+pTfuV+Qb7Y0I8bkj3g+JLClrc0oodVsoSg==",
-      "type": "package",
-      "path": "intercom.dotnet.client/2.1.1",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "intercom.dotnet.client.2.1.1.nupkg.sha512",
-        "intercom.dotnet.client.nuspec",
-        "lib/net452/Intercom.dll",
-        "lib/net452/Intercom.pdb"
       ]
     },
     "Microsoft.Extensions.Configuration/3.1.5": {
@@ -1869,6 +1971,23 @@
         "runtimes/win-x86/native/sni.dll",
         "useSharedDesignerContext.txt",
         "version.txt"
+      ]
+    },
+    "SharpZipLib/1.2.0": {
+      "sha512": "zvWa/L02JHNatdtjya6Swpudb2YEHaOLHL1eRrqpjm71iGRNUNONO5adUF/9CHbSJbzhELW1UoH4NGy7n7+3bQ==",
+      "type": "package",
+      "path": "sharpziplib/1.2.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/net45/ICSharpCode.SharpZipLib.dll",
+        "lib/net45/ICSharpCode.SharpZipLib.pdb",
+        "lib/net45/ICSharpCode.SharpZipLib.xml",
+        "lib/netstandard2.0/ICSharpCode.SharpZipLib.dll",
+        "lib/netstandard2.0/ICSharpCode.SharpZipLib.pdb",
+        "lib/netstandard2.0/ICSharpCode.SharpZipLib.xml",
+        "sharpziplib.1.2.0.nupkg.sha512",
+        "sharpziplib.nuspec"
       ]
     },
     "System.Collections/4.3.0": {
@@ -4793,8 +4912,8 @@
   },
   "projectFileDependencyGroups": {
     ".NETCoreApp,Version=v3.1": [
+      "DotNetCore.NPOI >= 1.2.3",
       "EPPlus >= 5.4.0",
-      "Intercom.Dotnet.Client >= 2.1.1",
       "Newtonsoft.Json >= 12.0.3",
       "System.Data.SqlClient >= 4.8.2"
     ]
@@ -4842,13 +4961,13 @@
       "netcoreapp3.1": {
         "targetAlias": "netcoreapp3.1",
         "dependencies": {
+          "DotNetCore.NPOI": {
+            "target": "Package",
+            "version": "[1.2.3, )"
+          },
           "EPPlus": {
             "target": "Package",
             "version": "[5.4.0, )"
-          },
-          "Intercom.Dotnet.Client": {
-            "target": "Package",
-            "version": "[2.1.1, )"
           },
           "Newtonsoft.Json": {
             "target": "Package",
@@ -4877,20 +4996,8 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.100\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.101\\RuntimeIdentifierGraph.json"
       }
     }
-  },
-  "logs": [
-    {
-      "code": "NU1701",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "已使用“.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8”而不是项目目标框架“.NETCoreApp,Version=v3.1”还原包“Intercom.Dotnet.Client 2.1.1”。此包可能与项目不完全兼容。",
-      "libraryId": "Intercom.Dotnet.Client",
-      "targetGraphs": [
-        ".NETCoreApp,Version=v3.1"
-      ]
-    }
-  ]
+  }
 }

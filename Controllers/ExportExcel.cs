@@ -5,11 +5,13 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Intercom.Data;
+using System.Xml.Linq;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using OfficeOpenXml;
+using OfficeOpenXml.Style;
 using WebApiNew.Model;
+using WebApiNew.StaticFunc;
 
 namespace WebApiNew.Controllers
 {
@@ -18,30 +20,50 @@ namespace WebApiNew.Controllers
     public class ExportExcel : ControllerBase
     {
         [HttpPost]
-        public  IActionResult Result()
+        public IActionResult Result()
         {
-            string fileName = $"{Guid.NewGuid().ToString()}.xlsx";
-
-            //store in memory rather than pysical directory
-            var stream = new MemoryStream();
-            using (ExcelPackage package = new ExcelPackage(stream))
-            {
-                ExcelWorksheet worksheet = package.Workbook.Worksheets.Add("Sheet1");//创建worksheet
-                package.Save();
-            // add worksheet
-            //ExcelWorksheet worksheet = package.Workbook.Worksheets.Add("Conversation Message");
-                //add head
-                worksheet.Cells[1, 1].Value = "From Id";
-                worksheet.Cells[1, 2].Value = "To Id";
-                worksheet.Cells[1, 3].Value = "Message";
-                worksheet.Cells[1, 4].Value = "Time";
-                worksheet.Cells[1, 5].Value = "Attachment";
-                worksheet.Cells[1, 6].Value = "Conversation Id";
-                worksheet.Cells[2,1].Value = "test";
-                package.Save();
-            }
-            stream.Position = 0;
-            return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+            return Ok("daochu");
         }
     }
+    //[Route("/[controller]")]
+    //[ApiController]
+    //public class ExportTest:ControllerBase { 
+    //    [HttpPost]
+    //    public IActionResult Result()
+    //    {
+    //        //延迟30分钟再可以提交
+    //        MdataCenter mdataCenter = new MdataCenter();
+    //        //DataTable dt = mdataCenter.WorkOrderData("20", "1",null,null,null);
+
+    //        //创建Excel文件的对象  
+    //        NPOI.HSSF.UserModel.HSSFWorkbook book = new NPOI.HSSF.UserModel.HSSFWorkbook();
+    //        //添加一个sheet  
+    //        NPOI.SS.UserModel.ISheet sheet1 = book.CreateSheet("Sheet1");
+    //        //给sheet1添加第一行的头部标题  
+    //        //NPOI.SS.UserModel.IRow row1 = sheet1.CreateRow(0);
+    //        ////row1.RowStyle.FillBackgroundColor = "";  
+    //        //for (int i = 0; i < dt.Columns.Count; i++)
+    //        //{
+    //        //    row1.CreateCell(i).SetCellValue(dt.Columns[i].ColumnName);
+    //        //}
+    //        ////将数据逐步写入sheet1各个行
+    //        //for (int i = 0; i < dt.Rows.Count; i++)
+    //        //{
+    //        //    NPOI.SS.UserModel.IRow rowtemp = sheet1.CreateRow(i + 1);
+    //        //    for (int j = 0; j < dt.Columns.Count; j++)
+    //        //    {
+    //        //        rowtemp.CreateCell(j).SetCellValue(dt.Rows[i][j].ToString().Trim());
+    //        //    }
+    //        //}
+    //        //string strdate = DateTime.Now.ToString("yyyyMMddhhmmss");//获取当前时间  
+    //        //// 写入到客户端   
+    //        //System.IO.MemoryStream ms = new System.IO.MemoryStream();
+    //        //book.Write(ms);
+    //        //ms.Seek(0, SeekOrigin.Begin);
+    //        //DateTime timer = DateTime.Now;
+    //        ////xele.SetAttributeValue("content", timer);
+    //        ////xele.Save(AppDomain.CurrentDomain.BaseDirectory + "Resource\\Config\\DatetimeConfig.xml");
+    //        //return File(ms, "application/vnd.ms-excel", strdate + "Excel.xls");
+    //    }
+    //}
 }

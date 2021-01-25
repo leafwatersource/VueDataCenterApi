@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -32,7 +33,7 @@ namespace WebApiNew.StaticFunc
             public static string UserGuid { get; set; }
             public static string UserSysID { get; set; }
             public static List<User> UserMessage = new List<User>();
-            public static List<string> FunctionList;
+            public static JObject FunctionList;
             public static string PMPlState{get;set;}
            
             public static string PMOcState { get; set; }

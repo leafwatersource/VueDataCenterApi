@@ -141,7 +141,7 @@ public class GetProductFinish:ControllerBase
 public class GetDataShift:ControllerBase
 {
     /// <summary>
-    /// 查询设备的班次
+    /// 设备状态页面查询设备的班次
     /// </summary>
     /// <param name="ResName"></param>
     /// <returns></returns>
@@ -156,12 +156,14 @@ public class GetDataShift:ControllerBase
 public class GetResEventData : ControllerBase
 {
     /// <summary>
-    /// 查询点击的设备的事件操作记录
+    /// 设备状态页面查询点击的设备的事件操作记录
     /// </summary>
     /// <param name="ResName"></param>
     /// <returns></returns>
     public IActionResult Result([FromForm]string ResName)
     {
+        MStatistics mStatistics = new MStatistics();
+        DataTable table = mStatistics.ResEvent(ResName);
         return Ok("hello");
     }
 }

@@ -32,17 +32,19 @@ namespace WebApiNew
         public void RenderConfig()
         {
             string filepach = AppContext.BaseDirectory;
-            AppSetting.BasePath = AppContext.BaseDirectory;
+            AppSetting.BasePath = filepach;
             XmlDocument document = new XmlDocument();
             document.Load(filepach + "appsettings.xml");
             //数据库连接字段
             XmlNode Connection = document.SelectSingleNode("AppConfig").SelectSingleNode("Connection");
             //属性定义字段
-            XmlNode TableFileConfig = document.SelectSingleNode("AppConfig").SelectSingleNode("TableFileds");
+            XmlNode TableFileConfig = document.SelectSingleNode("AppConfig").SelectSingleNode("TableFileds");//订单查询、执行计划、设备使用记录的列
             XmlNodeList TableFiledsConfigList = TableFileConfig.ChildNodes;
-            XmlNodeList ConnectionList = Connection.ChildNodes;
-            XmlNode Pmsetting = document.SelectSingleNode("AppConfig").SelectSingleNode("PMSettings");
+            XmlNodeList ConnectionList = Connection.ChildNodes;//连接字符串
+            XmlNode Pmsetting = document.SelectSingleNode("AppConfig").SelectSingleNode("PMSettings");//读取配置
             XmlNodeList SettingList = Pmsetting.ChildNodes;
+            XmlNodeList StatisticsHover = document.SelectSingleNode("AppConfig").SelectSingleNode("Statistics").ChildNodes;//设备状态要显示的列
+            XmlNodeList FilterFileds = document.SelectSingleNode("AppConfig").SelectSingleNode("FilterFileds").ChildNodes;//列表筛选的列的定义
             string datasource = Connection.Attributes["datasource"].Value;
             List<JObject> temp;
             AppSetting.TableFileds = new JObject();
@@ -53,10 +55,17 @@ namespace WebApiNew
                 foreach (XmlNode filed in xl)
                 {
                     JObject props = new JObject { {
-                        filed.Name,filed.InnerText
+                        filed.Attributes["name"].Value.ToString(),filed.InnerText
                         },{
                         "type",filed.Attributes["type"].Value
-                        } };
+                        },{
+                        "width",filed.Attributes["width"].Value
+                        },
+                        { "sqlNameT", filed.Attributes["name"].Value},
+                        { "showNameT",filed.InnerText},
+                        { "switchNameT", filed.Attributes["filter"].Value},
+                        { "indexNameT", filed.Attributes["indexNameT"].Value},
+                    };
                     //temp.Add(filed.Name, filed.InnerText);
                     //temp.Add("type", filed.Attributes["type"].Value);
                     temp.Append(props);
@@ -82,18 +91,25 @@ namespace WebApiNew
 
             foreach (XmlNode item in SettingList)
             {
-                string bbb = item.Name.ToLower();
                 if (item.Name.ToLower() == "plstate")
                 {
-                    string aaa = item.InnerText;
                     PMUser.PMPlState = item.InnerText;
                 }
                 if (item.Name.ToLower() == "ocstate")
                 {
                     PMUser.PMOcState = item.InnerText;
                 }
+                if (item.Name.ToLower() == "changeplan")
+                {
+                    AppSetting.ChangePlan = Convert.ToBoolean(item.InnerText);
+                }
             }
+            AppSetting.StatisticsHover = new JObject();
+            //初始化设备使用状态页面鼠标hover的展示信息
+            SetStatisticsHover(StatisticsHover);
+            //SetFilterFiled(FilterFileds);
             RenderMapResTable();
+            SetResStatistics();
         }
         public IConfiguration Configuration { get; }
 
@@ -104,7 +120,7 @@ namespace WebApiNew
             {
                 opertions.AddPolicy("any", bulider =>
                 {
-                    bulider.SetIsOriginAllowed(op => true)
+                    bulider.SetIsOriginAllowed(op => true)  
                     .AllowAnyMethod()
                     .AllowAnyHeader()
                     .AllowCredentials();
@@ -114,7 +130,6 @@ namespace WebApiNew
             services.AddControllers();
 
         }
-
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
@@ -123,7 +138,7 @@ namespace WebApiNew
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
 
             app.UseCors("any");
 
@@ -137,6 +152,7 @@ namespace WebApiNew
             });
         }
 
+        //读取MapResTable.xml,如果不存在就创建，如果存在就初始化有效工时的map表
         public void RenderMapResTable()
         {
             string filepach = AppContext.BaseDirectory;
@@ -146,7 +162,7 @@ namespace WebApiNew
             cmd.CommandText = "select distinct(eventtype) from wapMesEventRec";
             SqlDataAdapter ad = new SqlDataAdapter(cmd);
             ad.Fill(MapResTable);
-            cmd.Connection.Close(); 
+            cmd.Connection.Close();
             if (File.Exists(filepach + "MapResTable.xml")) {
                 XmlDocument document = new XmlDocument();
                 document.Load(filepach + "MapResTable.xml");
@@ -165,6 +181,8 @@ namespace WebApiNew
             }
             SetMapResTable();
         }
+
+        //初始化有效工时的map表
         public void SetMapResTable()
         {
             string filepach = AppContext.BaseDirectory;
@@ -184,7 +202,8 @@ namespace WebApiNew
                 AppSetting.MapResTable.Rows.Add(row);
             }
         }
-        public void SetMapResXML(XmlDocument xmlDoc,DataTable MapResTable) {
+        //创建MapResTable.xml并赋值默认值
+        public void SetMapResXML(XmlDocument xmlDoc, DataTable MapResTable) {
             string filepach = AppContext.BaseDirectory;
             XmlNode node = xmlDoc.CreateXmlDeclaration("1.0", "utf-8", "");
             xmlDoc.AppendChild(node);
@@ -206,6 +225,7 @@ namespace WebApiNew
 
             xmlDoc.Save(filepach + "MapResTable.xml");
         }
+        //xml创建节点
         public XmlAttribute CreateAttribute(XmlNode node, string attributeName, string value)
         {
             try
@@ -223,5 +243,62 @@ namespace WebApiNew
                 return null;
             }
         }
+
+        /// <summary>
+        /// 初始化设备使用状态页面鼠标hover的展示信息
+        /// </summary>
+        public void SetStatisticsHover(XmlNodeList nodeList)
+        {
+            foreach (XmlNode item in nodeList)
+            {
+                string name = item.Name;
+                int hasChild = item.ChildNodes.Count;
+                if (hasChild > 1)
+                {
+                    JObject attr = new JObject();
+                    XmlNodeList list = item.ChildNodes;
+                    foreach (XmlNode itemList in list)
+                    {
+                        string listName = itemList.Name;
+                        string listValue = itemList.InnerText;
+                        if (!string.IsNullOrEmpty(listValue))
+                        {
+                            attr[listName] = listValue;
+                        }
+                    }
+                    AppSetting.StatisticsHover[name] = attr;
+                }
+                else
+                {
+                    string value = item.InnerText;
+                    if (!string.IsNullOrEmpty(value))
+                    {
+                        AppSetting.StatisticsHover[name] = value;
+                    }
+                }
+
+            }
+        }
+        /// <summary>
+        /// 设置产能分析的表格的列
+        /// </summary>
+        public void SetResStatistics(){
+            string filepach = AppContext.BaseDirectory;
+            AppSetting.BasePath = filepach;
+            XmlDocument document = new XmlDocument();
+            document.Load(filepach + "appsettings.xml");
+            //数据库连接字段
+            XmlNode ResStatistics = document.SelectSingleNode("AppConfig").SelectSingleNode("ResStatistics");
+            AppSetting.ResStatistic = new JObject();
+            //属性定义字段
+            foreach (XmlNode item in ResStatistics)
+            {
+                AppSetting.ResStatistic[item.Name] = item.InnerText;
+            }
+
+      }
+
+
+
     }
 }

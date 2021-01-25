@@ -38,7 +38,6 @@ namespace WebApiNew.Model
             {
                 cmd.CommandText = "select " + colName + " from PMS_WorkPlans where sysID = '" + PMUser.UserSysID + "' and Status = '" + PMUser.PMPlState + "'";
             }
-            //cmd.CommandText = "select Owner,WorkPlanId,WorkPlanName from PMS_WorkPlans where sysID = '" + AppSettings.PMSysid + "' and Status = '" + AppSettings.PMPlState + "'";
             SqlDataReader rd = cmd.ExecuteReader();
             rd.Read();
             Owner = rd["Owner"].ToString();
@@ -92,6 +91,23 @@ namespace WebApiNew.Model
             LatePercentage = Convert.ToInt32((Convert.ToDouble(LateCount) / Convert.ToDouble(table.Rows.Count)) * 100);
         }
 
+        /// <summary>
+        /// 根据工单获取所有的工序的进度
+        /// </summary>
+        /// <param name="workID">工单号码</param>
+        /// <returns></returns>
+        public DataTable GetOPData(string workID)
+        {
+            DataTable table = new DataTable();
+            SqlCommand cmd = PmConnections.SchCmd();
+            cmd.CommandText = "select * from User_MESAllData where workID = '" + workID + "' order by opIndex";
+            SqlDataAdapter ad = new SqlDataAdapter(cmd);
+            ad.Fill(table);
+            ad.Dispose();
+            cmd.Connection.Close();
+            return table;
+        }
+
         public static DataTable GetWorkOrder(string colName, string filter, string ordertype)
         {
             DataTable table = new DataTable();
@@ -133,21 +149,22 @@ namespace WebApiNew.Model
         /// <param name="maxUid"></param>
         /// <param name="columns"></param>
         /// <param name="workType">工单类型</param>
-        /// <returns></returns>
-        public static DataTable GetOrder(string pageSize, string filter, int maxUid, string columns,string workType,string fuzzyFilter)
+        /// <returns></returns>%
+        public static DataTable GetOrder(string pageSize, string filter, int maxUid, string columns, string workType, string fuzzyFilter,string filterFirstDemandDay)
         {
             DataTable table = new DataTable();
             SqlCommand cmd = PmConnections.SchCmd();
             cmd.CommandText = "select top " + pageSize + " " + columns + " from User_WorkOrder where uid > '" + maxUid + "' and isScheduleWorkID = '1' and workPlanID in (SELECT workPlanID FROM PMS_WorkPlans where sysID = '" + PMUser.UserSysID + "' and Status = '" + PMUser.PMOcState + "')";
+            //cmd.CommandText = "select top " + pageSize + " " + columns + " from User_WorkOrder where uid > '" + maxUid + "' and isScheduleWorkID = '1' and workPlanID = 959";
             string filterStr = "";
             string fuzzyFilterText = "";
             if (!String.IsNullOrEmpty(filter) && filter != "{}")
             {
-                    JObject filters = JObject.Parse(filter);
-                    foreach (var item in filters)
-                    {
-                        filterStr += " and " + item.Key + "='" + item.Value + "'";
-                    }
+                JObject filters = JObject.Parse(filter);
+                foreach (var item in filters)
+                {
+                    filterStr += " and " + item.Key + "='" + item.Value + "'";
+                }
             }
             if (workType == "EarlyPlan")
             {
@@ -175,7 +192,7 @@ namespace WebApiNew.Model
                 var mJObj = JArray.Parse(SQLWorkOrderFileds);
                 foreach (var item in mJObj)
                 {
-                    JObject itemObj = item.ToObject<JObject>(); 
+                    JObject itemObj = item.ToObject<JObject>();
                     string key = itemObj.First.First.Path;
                     if (string.IsNullOrEmpty(fuzzyFilterText))
                     {
@@ -188,6 +205,17 @@ namespace WebApiNew.Model
                 }
                 fuzzyFilterText += ")";
             }
+            if (!string.IsNullOrEmpty(filterFirstDemandDay))
+            {
+                JArray filterFirstDemandDayArr = (JArray)JsonConvert.DeserializeObject(filterFirstDemandDay);
+                string filterFirstDemandDayStr = "(";
+                foreach (string item in filterFirstDemandDayArr)
+                {
+                    filterFirstDemandDayStr += filterFirstDemandDayStr == "("?"'"+item+"'":",'"+item+"'";
+                }
+                filterFirstDemandDayStr += ")";
+                filterStr += " and firstDemandDay in " + filterFirstDemandDayStr;
+            }
             cmd.CommandText += filterStr + fuzzyFilterText + " order by UID";
             SqlDataAdapter ad = new SqlDataAdapter(cmd);
             ad.Fill(table);
@@ -199,26 +227,26 @@ namespace WebApiNew.Model
         /// 查询订单列表
         /// </summary>
         /// <returns></returns>
-        public DataTable WorkOrderData(string pageSize, string curPage, string filter, string fuzzyFilter,string workType)
+        public DataTable WorkOrderData(string pageSize, string curPage, string filter, string fuzzyFilter, string workType, string filterFirstDemandDay)
         {
             //查看要查询数据库中的哪些列
-            var SQLWorkOrderFileds =  AppSetting.TableFileds.GetValue("SQLWorkOrderFiled").ToString();
+            var SQLWorkOrderFileds = AppSetting.TableFileds.GetValue("SQLWorkOrderFiled").ToString();
             var mJObj = JArray.Parse(SQLWorkOrderFileds);
             string SQLWorkOrderFiled = "";
             foreach (var item in mJObj)
             {
                 JObject itemObj = item.ToObject<JObject>();
-                string key= itemObj.First.First.Path;
-                string  type = itemObj.Last.Last.Value<string>();
+                string key = itemObj.First.First.Path;
+                string type = itemObj.Last.Last.Value<string>();
                 if (string.IsNullOrEmpty(SQLWorkOrderFiled))
                 {
-                    if (type=="datetime")
+                    if (type == "datetime")
                     {
                         SQLWorkOrderFiled += "CONVERT(varchar(100)," + key + ", 120) AS " + key;
                     }
                     else if (type == "date")
                     {
-                        SQLWorkOrderFiled += "CONVERT(varchar(100)," + key + ", 111) AS "+key;
+                        SQLWorkOrderFiled += "CONVERT(varchar(100)," + key + ", 111) AS " + key;
                     }
                     else
                     {
@@ -237,16 +265,16 @@ namespace WebApiNew.Model
                     }
                     else
                     {
-                        SQLWorkOrderFiled +=","+key;
+                        SQLWorkOrderFiled += "," + key;
                     }
                 }
             }
             int max = 0;
             if (Convert.ToInt32(curPage) > 1)
             {
-                max = GetMaxUid((Convert.ToInt32(curPage) - 1) * Convert.ToInt32(pageSize),workType);
+                max = GetMaxUid((Convert.ToInt32(curPage) - 1) * Convert.ToInt32(pageSize), workType);
             }
-            DataTable dt = GetOrder(pageSize, filter, max, SQLWorkOrderFiled, workType, fuzzyFilter);
+            DataTable dt = GetOrder(pageSize, filter, max, SQLWorkOrderFiled, workType, fuzzyFilter, filterFirstDemandDay);
             foreach (var item in mJObj)
             {
                 JObject itemObj = item.ToObject<JObject>();
@@ -255,7 +283,7 @@ namespace WebApiNew.Model
                 dt.Columns[path].ColumnName = column;
                 //string column = itemObj;
             }
-                return dt;
+            return dt;
         }
         /// <summary>
         /// 获取属性的列表 
@@ -304,7 +332,7 @@ namespace WebApiNew.Model
         /// </summary>
         /// <param name="end">前几条的数据</param>
         /// <returns></returns>
-        public int GetMaxUid(int end,string workType)
+        public int GetMaxUid(int end, string workType)
         {
             DataTable table = new DataTable();
             SqlCommand cmd = PmConnections.SchCmd();
@@ -330,7 +358,7 @@ namespace WebApiNew.Model
                 //异常的订单
                 filterStr += " and planStartTime is null";
             }
-            cmd.CommandText = "select top " + end + " uid from User_WorkOrder where  isScheduleWorkID = '1'  and workPlanID in (SELECT workPlanID FROM PMS_WorkPlans where sysID = '" + PMUser.UserSysID + "' and Status = '" + PMUser.PMOcState + "') "+ filterStr + " order by UID";
+            cmd.CommandText = "select top " + end + " uid from User_WorkOrder where  isScheduleWorkID = '1'  and workPlanID in (SELECT workPlanID FROM PMS_WorkPlans where sysID = '" + PMUser.UserSysID + "' and Status = '" + PMUser.PMOcState + "') " + filterStr + " order by UID";
 
             SqlDataAdapter ad = new SqlDataAdapter(cmd);
             ad.Fill(table);
@@ -343,17 +371,29 @@ namespace WebApiNew.Model
         ///获取表格的总数
         /// </summary>
         /// <returns></returns>
-        public int GetOrderCount(string filter, string fuzzyFilter,string workType)
+        public int GetOrderCount(string filter, string fuzzyFilter, string workType, string filterFirstDemandDay)
         {
             int count = 0;
             string filterStr = "";
             string fuzzyFilterText = "";
             SqlCommand cmd = PmConnections.SchCmd();
             cmd.CommandText = "SELECT count(*) FROM User_WorkOrder where  workPlanID in (SELECT workPlanID FROM PMS_WorkPlans where sysID = '" + PMUser.UserSysID + "' and Status = '" + PMUser.PMOcState + "') and isScheduleWorkID = '1'";
-            if (!string.IsNullOrEmpty(filter) && filter != "{}" && filter !=null)
+            if (!string.IsNullOrEmpty(filterFirstDemandDay))
+            {
+                JArray filterFirstDemandDayArr = (JArray)JsonConvert.DeserializeObject(filterFirstDemandDay);
+                string filterFirstDemandDayStr = "(";
+                foreach (string item in filterFirstDemandDayArr)
+                {
+                    filterFirstDemandDayStr += filterFirstDemandDayStr == "(" ?"'"+ item+"'" : "," + "'"+item+"'";
+                }
+                filterFirstDemandDayStr += ")";
+                filterStr += " and firstDemandDay in " + filterFirstDemandDayStr;
+            }
+
+            if (!string.IsNullOrEmpty(filter) && filter != "{}" && filter != null)
             {
                 JObject filters = JObject.Parse(filter);
-                
+
                 foreach (var item in filters)
                 {
                     filterStr += " and " + item.Key + "='" + item.Value + "'";
@@ -398,10 +438,13 @@ namespace WebApiNew.Model
                 //异常的订单
                 filterStr += " and planStartTime is null";
             }
-            cmd.CommandText += filterStr+ fuzzyFilterText;
+           
+            
+            cmd.CommandText += filterStr + fuzzyFilterText;
             count = (int)cmd.ExecuteScalar();
             cmd.Connection.Close();
             return count;
         }
     }
 }
+

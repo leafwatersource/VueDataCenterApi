@@ -62,8 +62,9 @@ namespace WebApiNew.Model
         /// <param name="Resource">设备名称</param>
         /// <param name="GroupName">设备组的名称</param>
         /// <param name="ChangeModel">是否是换模计划</param>
+        /// <param name="filterFirstDemandDay">筛选需求日期</param>
         /// <returns></returns>
-        public string GetResPlan(string PageSize, string CurPage,string Resource, string GroupName,bool ChangeModel,string filter,string fuzzyFilter)
+        public string GetResPlan(string PageSize, string CurPage,string Resource, string GroupName,bool ChangeModel,string filter,string fuzzyFilter,string filterFirstDemandDay)
         {
             int max = 0;
             if (Convert.ToInt32(CurPage) > 1)
@@ -113,11 +114,11 @@ namespace WebApiNew.Model
             }
             if (string.IsNullOrEmpty(Resource))
             {
-                table = GetWorkPlanBars(PageSize, SQLWorkPlanFiled, " OperationID in ( select resName from View_pmViewGroup where VIewName = '" + GroupName + "') and BarID>'" + max + "'", ChangeModel, filter, fuzzyFilter);
+                table = GetWorkPlanBars(PageSize, SQLWorkPlanFiled, " OperationID in ( select resName from View_pmViewGroup where VIewName = '" + GroupName + "') and BarID>'" + max + "'", ChangeModel, filter, fuzzyFilter, filterFirstDemandDay);
             }
             else
             {
-                table = GetWorkPlanBars(PageSize, SQLWorkPlanFiled, " OperationID = '" + Resource + "' and BarID>'" + max + "'", ChangeModel, filter, fuzzyFilter);
+                table = GetWorkPlanBars(PageSize, SQLWorkPlanFiled, " OperationID = '" + Resource + "' and BarID>'" + max + "'", ChangeModel, filter, fuzzyFilter, filterFirstDemandDay);
             }
             foreach (var item in mJObj)
             {
@@ -128,7 +129,7 @@ namespace WebApiNew.Model
             }
             JObject data = new JObject();
             data.Add("ImplementationData", JsonConvert.SerializeObject(table));
-            data.Add("ImplementationCount", ResWorkCount(Resource, GroupName,ChangeModel,filter, fuzzyFilter));
+            data.Add("ImplementationCount", ResWorkCount(Resource, GroupName,ChangeModel,filter, fuzzyFilter, filterFirstDemandDay));
             data.Add("ImplementationStatus", 1);
             return data.ToString();
         }
@@ -140,7 +141,7 @@ namespace WebApiNew.Model
         /// <param name="filter">筛选条件</param>
         /// <param name="ChangeModel">是否是换模计划</param>
         /// <returns></returns>
-        public static DataTable GetWorkPlanBars(string PageSize,string colName, string filter,bool ChangeModel,string filterClient,string fuzzyFilter)
+        public static DataTable GetWorkPlanBars(string PageSize,string colName, string filter,bool ChangeModel,string filterClient,string fuzzyFilter,string filterFirstDemandDay)
         {
             // colName: colname1,colname2,
             // filter:colname1 = 'value1',and colname2 = 'value2'
@@ -194,6 +195,9 @@ namespace WebApiNew.Model
                     }
                 } 
                 fuzzyFilterText += ")";
+            }
+            if (!string.IsNullOrEmpty(filterFirstDemandDay)) {
+                filterStr += " and firstDemandDay='" + filterFirstDemandDay + "'";
             }
             if (ChangeModel)
             {
@@ -284,7 +288,7 @@ namespace WebApiNew.Model
             cmd.Connection.Close();
             return Convert.ToInt32(table.Rows[table.Rows.Count-1][0]);
         }
-        public int ResWorkCount(string resource, string GroupName, bool ChangeModel,string fitler,string fuzzyFilter)
+        public int ResWorkCount(string resource, string GroupName, bool ChangeModel,string fitler,string fuzzyFilter,string filterFirstDemandDay)
         {
             int count = 0;
             string filterStr = "";
@@ -325,6 +329,10 @@ namespace WebApiNew.Model
                     }
                 }
                 fuzzyFilterText += ")";
+            }
+            if (!string.IsNullOrEmpty(filterFirstDemandDay))
+            {
+                filterStr += " and firstDemandDay = '" + filterFirstDemandDay + "'";
             }
             cmd.CommandText += filterStr + fuzzyFilterText;
             if (ChangeModel)

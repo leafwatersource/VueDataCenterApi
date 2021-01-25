@@ -43,13 +43,13 @@
         "netcoreapp3.1": {
           "targetAlias": "netcoreapp3.1",
           "dependencies": {
+            "DotNetCore.NPOI": {
+              "target": "Package",
+              "version": "[1.2.3, )"
+            },
             "EPPlus": {
               "target": "Package",
               "version": "[5.4.0, )"
-            },
-            "Intercom.Dotnet.Client": {
-              "target": "Package",
-              "version": "[2.1.1, )"
             },
             "Newtonsoft.Json": {
               "target": "Package",
@@ -78,7 +78,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.100\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.101\\RuntimeIdentifierGraph.json"
         }
       }
     }

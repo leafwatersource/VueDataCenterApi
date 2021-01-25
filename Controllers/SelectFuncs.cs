@@ -38,7 +38,7 @@ namespace WebApiNew.Controllers
         [HttpPost]
         public IActionResult Result()
         {
-            return Ok(PMUser.FunctionList);
+            return Ok(PMUser.FunctionList.ToString());
         }
     }
 }

@@ -176,40 +176,52 @@ namespace WebApiNew.Model
             cmd.Connection.Close();
             return empname;
         }
-        public List<string> GetuserGroup(string empID)
+        public JObject GetuserGroup(string empID)
         {
-            List<string> tmp = new List<string>();
+            //List<string> tmp = new List<string>();
             SqlCommand cmd = PmConnections.ModCmd();
-            cmd.CommandText = "select userName from wapEmpUserMap where empID = '" + empID + "'";
-            SqlDataAdapter da = new SqlDataAdapter(cmd);
-            DataTable DtUsermap = new DataTable();
-            da.Fill(DtUsermap);
-            da.Dispose();
+            //cmd.CommandText = "select userName from wapEmpUserMap where empID = '" + empID + "'";
+            //SqlDataAdapter da = new SqlDataAdapter(cmd);
+            //DataTable DtUsermap = new DataTable();
+            //da.Fill(DtUsermap);
+            //da.Dispose();
 
-            cmd.CommandText = "select *  from  wapUser";
-            da = new SqlDataAdapter(cmd);
+            //cmd.CommandText = "select *  from  wapUser";
+            cmd.CommandText = "select shopUserGroupID,dataCenterPurview from wapEmpList where empID = '" + empID + "'";//修改表格过后
+            SqlDataAdapter wapAd = new SqlDataAdapter(cmd);
             DataTable DtWapuser = new DataTable();
-            da.Fill(DtWapuser);
-            da.Dispose();
+            wapAd.Fill(DtWapuser);
+            wapAd.Dispose();
             cmd.Connection.Close();
-
-            if (DtUsermap.Rows.Count > 0)   //一定会有数据，防呆
+            JObject userObj = new JObject();//用户的权限
+            foreach (DataColumn column in DtWapuser.Columns)
             {
-                foreach (DataRow item in DtUsermap.Rows)
+                if (DtWapuser.Rows[0][column].ToString().ToUpper() == "ADMIN")
                 {
-                    string username = item["userName"].ToString();
-                    DataRow[] dr = DtWapuser.Select("userName = '" + username + "'");
-                    if (dr.Count() > 0)
-                    {
-                        string addstring = dr[0][1].ToString();
-                        if (tmp.Contains(addstring) == false)
-                        {
-                            tmp.Add(addstring);
-                        }
-                    }
+                    userObj[column.ColumnName] = DtWapuser.Rows[0][column].ToString();
+                    break;
                 }
+                userObj[column.ColumnName] = DtWapuser.Rows[0][column].ToString();
+
             }
-            return tmp;
+            PMUser.FunctionList = userObj;
+            //if (DtUsermap.Rows.Count > 0)   //一定会有数据，防呆
+            //{
+            //    foreach (DataRow item in DtUsermap.Rows)
+            //    {
+            //        string username = item["userName"].ToString();
+            //        DataRow[] dr = DtWapuser.Select("userName = '" + username + "'");
+            //        if (dr.Count() > 0)
+            //        {
+            //            string addstring = dr[0][1].ToString();
+            //            if (tmp.Contains(addstring) == false)
+            //            {
+            //                tmp.Add(addstring);
+            //            }
+            //        }
+            //    }
+            //}
+            return userObj;
         }
         public LoginMessage LoginState(string userName,string userPass, string adminstate,string UserIpAdress,string UserWeb)
         {
@@ -226,77 +238,95 @@ namespace WebApiNew.Model
             LoginMessage userMsg = LoginMessage();
             if (userMsg.LoginState == "1")
             {
-                List<string> userGroup = GetuserGroup(userName);
-                if (userGroup.Count < 1)
+                //List<string> userGroup = GetuserGroup(userName);
+                JObject obj = GetuserGroup(userName);
+                bool userView = true;
+                foreach (var item in obj.Properties())
                 {
-                    userMsg.LoginState = "0";
-                    userMsg.Message = "该员工没有分配用户组，请联系管理员分配。";
+                    string key = item.Name;
+                    string value = item.Value.Value<JToken>().ToString().ToUpper();
+                    if (value == "ADMIN")
+                    {
+                        userView = true;
+                        break;
+                    }
+                    else if (value == "TRUE")
+                    {
+                        userView = true;
+                        break;
+                    }
                 }
-                else
-                {
-                    user.UserGuid = userMsg.UserGuid;
-                    user.UserName = GetempName(userName);
+              
+                //if (userGroup.Count < 1)
+                //{
+                //    userMsg.LoginState = "0";
+                //    userMsg.Message = "该员工没有分配用户组，请联系管理员分配。";
+                //}
+                //else
+                //{
+                //    user.UserGuid = userMsg.UserGuid;
+                //    user.UserName = GetempName(userName);
 
-                    PMUser.UserGuid = userMsg.UserGuid;
-                    PMUser.UserName = GetempName(userName);
-                    //Response.Cookies.Append("EmpID", user.EmpID);
-                    //Response.Cookies.Append("EmpID", PMUser.EmpID);
-                    //Response.Cookies.Append("UserGuid", PMUser.UserGuid);
-                }
+                //    PMUser.UserGuid = userMsg.UserGuid;
+                //    PMUser.UserName = GetempName(userName);
+                //    //Response.Cookies.Append("EmpID", user.EmpID);
+                //    //Response.Cookies.Append("EmpID", PMUser.EmpID);
+                //    //Response.Cookies.Append("UserGuid", PMUser.UserGuid);
+                //}
 
-                if (adminstate == "1")
-                {
-                    if (userGroup.Contains("ADMIN") == false)
-                    {
-                        userMsg.LoginState = "0";
-                        userMsg.Message = "请不要使用非管理员账户越权操作!";
-                        PMPublicFuncs.WriteLogs(userName, GetempName(userName), PMUser.UserIpAdress, "越权登陆", DateTime.Now, "用户越权使用管理员登陆。", PMUser.UserWeb);
-                    }
-                    else
-                    {
-                        string md5Guid = Guid.NewGuid().ToString();
-                        //Response.Cookies.Append("MD5", PMPublicFuncs.GetMd5("ADMIN" + md5Guid));
-                        //Response.Cookies.Append("MD5", PMPublicFuncs.GetMd5("ADMIN" + md5Guid), new CookieOptions() { IsEssential = true });
-                        PMPublicFuncs.WriteLogs(userName, GetempName(userName), PMUser.UserIpAdress, "管理员登录", DateTime.Now, "管理员登陆成功。", PMUser.UserWeb);
-                        //管理员登录成功
-                    }
-                }
-                else
-                {
-                    //判断该用户具有的功能模块权限，如果只有一个权限，直接跳入页面，如果有多个权限，给出选择
-                    if (PMUser.FunctionList == null)
-                    {
-                        PMUser.FunctionList = new List<string>();
-                    }
-                    PMUser.FunctionList.Clear();
-                    foreach (string item in userGroup)
-                    {
-                        if (item == "ADMIN")
-                        {
-                            PMUser.FunctionList.Add("datacenter");
-                            break;
-                        }
-                        else if (item == "CFM")
-                        {
-                            PMUser.FunctionList.Add("systemsetting");
-                        }
-                        else if (item == "REP")
-                        {
-                            PMUser.FunctionList.Add("reportsystem");
-                        }
-                        else if (item == "VIEW")
-                        {
-                            PMUser.FunctionList.Add("datacenter");
-                        }
-                        else if (item == "BOARD")
-                        {
-                            PMUser.FunctionList.Add("planboard");
-                        }
-                    }
-                    PMUser.UserMessage.Add(user);
-                    //登录成功
-                    PMPublicFuncs.WriteLogs(userName, GetempName(userName), PMUser.UserIpAdress, "用户登陆", DateTime.Now, "用户登陆成功。", PMUser.UserWeb);
-                }
+                //if (adminstate == "1")
+                //{
+                //    if (userGroup.Contains("ADMIN") == false)
+                //    {
+                //        userMsg.LoginState = "0";
+                //        userMsg.Message = "请不要使用非管理员账户越权操作!";
+                //        PMPublicFuncs.WriteLogs(userName, GetempName(userName), PMUser.UserIpAdress, "越权登陆", DateTime.Now, "用户越权使用管理员登陆。", PMUser.UserWeb);
+                //    }
+                //    else
+                //    {
+                //        string md5Guid = Guid.NewGuid().ToString();
+                //        //Response.Cookies.Append("MD5", PMPublicFuncs.GetMd5("ADMIN" + md5Guid));
+                //        //Response.Cookies.Append("MD5", PMPublicFuncs.GetMd5("ADMIN" + md5Guid), new CookieOptions() { IsEssential = true });
+                //        PMPublicFuncs.WriteLogs(userName, GetempName(userName), PMUser.UserIpAdress, "管理员登录", DateTime.Now, "管理员登陆成功。", PMUser.UserWeb);
+                //        //管理员登录成功
+                //    }
+                //}
+                //else
+                //{
+                //    //判断该用户具有的功能模块权限，如果只有一个权限，直接跳入页面，如果有多个权限，给出选择
+                //    if (PMUser.FunctionList == null)
+                //    {
+                //        PMUser.FunctionList = new List<string>();
+                //    }
+                //    PMUser.FunctionList.Clear();
+                //    foreach (string item in userGroup)
+                //    {
+                //        if (item == "ADMIN")
+                //        {
+                //            PMUser.FunctionList.Add("datacenter");
+                //            break;
+                //        }
+                //        else if (item == "CFM")
+                //        {
+                //            PMUser.FunctionList.Add("systemsetting");
+                //        }
+                //        else if (item == "REP")
+                //        {
+                //            PMUser.FunctionList.Add("reportsystem");
+                //        }
+                //        else if (item == "VIEW")
+                //        {
+                //            PMUser.FunctionList.Add("datacenter");
+                //        }
+                //        else if (item == "BOARD")
+                //        {
+                //            PMUser.FunctionList.Add("planboard");
+                //        }
+                //    }
+                //    PMUser.UserMessage.Add(user);
+                //    //登录成功
+                //    PMPublicFuncs.WriteLogs(userName, GetempName(userName), PMUser.UserIpAdress, "用户登陆", DateTime.Now, "用户登陆成功。", PMUser.UserWeb);
+                //}
             }
             return userMsg;
         }
@@ -314,7 +344,7 @@ namespace WebApiNew.Model
         {
             DataTable table = new DataTable();
             SqlCommand cmd = PmConnections.ModCmd();
-            cmd.CommandText = "SELECT empID,empWorkID,empName,dept,phoneNum,email,sysID,cusID,shopUserGroupID FROM wapEmpList where empID = '" + PMUser.EmpID + "'";
+            cmd.CommandText = "SELECT empID,empWorkID,empName,dept,phoneNum,email,sysID,shopUserGroupID FROM wapEmpList where empID = '" + PMUser.EmpID + "'";
             SqlDataAdapter ad = new SqlDataAdapter(cmd);
             ad.Fill(table);
             ad.Dispose();

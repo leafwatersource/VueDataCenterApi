@@ -202,7 +202,20 @@ namespace WebApiNew.Model
         {
             DataTable table = new DataTable();
             SqlCommand cmd = PmConnections.SchCmd();
-            cmd.CommandText = "select resName,fromDay,toDay,resNeedHour,resWorkHour,hourRatio,pmUID from stsResWorkHour where  workPlanID = '" + GetWorkPlanID() + "' and timeType = 'W' and resName='" + resName + "'";
+            string columns = "";
+            foreach (var item in AppSetting.ResStatistic)
+            {
+                var aaa = item;
+                if (string.IsNullOrEmpty(columns))
+                {
+                    columns += item.Key;
+                }
+                else
+                {
+                    columns += "," + item.Key;
+                }
+            }
+            cmd.CommandText = "select "+ columns + " from stsResWorkHour where  workPlanID = '" + GetWorkPlanID() + "' and timeType = 'W' and resName='" + resName + "'";
             SqlDataAdapter ad = new SqlDataAdapter(cmd);
             ad.Fill(table);
             ad.Dispose();
@@ -229,7 +242,18 @@ namespace WebApiNew.Model
                     }
                 }
                 SqlCommand cmd = PmConnections.SchCmd();
-                cmd.CommandText = "select resName,fromDay,toDay,resNeedHour,resWorkHour,hourRatio,pmUID from stsResWorkHour  where  workPlanID = '" + GetWorkPlanID() + "' and timeType = 'W' and resName in(" + columns + ") order by resName";
+                string ResStatisticColumns = "";
+                foreach (var item in AppSetting.ResStatistic)
+                {
+                    if (string.IsNullOrEmpty(ResStatisticColumns))
+                    {
+                        ResStatisticColumns = item.Key;
+                    }
+                    else {
+                        ResStatisticColumns += "," + item.Key;
+                    }
+                }
+                cmd.CommandText = "select "+ ResStatisticColumns + " from stsResWorkHour  where  workPlanID = '" + GetWorkPlanID() + "' and timeType = 'W' and resName in(" + columns + ") order by resName";
                 SqlDataAdapter ad = new SqlDataAdapter(cmd);
                 ad.Fill(table);
                 ad.Dispose();
@@ -246,20 +270,33 @@ namespace WebApiNew.Model
         {
             //planTable
             DataTable planTable = new DataTable();
-            TimeSpan planHour;
+            //TimeSpan planHour;
+            double planHour = 0;
             SqlCommand cmd = PmConnections.SchCmd();
             cmd.CommandText = "select ResCalStartTime,ResCalEndTime from wapResCalendar where ResourceName = '" + curRes + "' and '" + DateTime.Now + "' >= ResCalStartTime and '" + DateTime.Now + "' < ResCalEndTime";
             SqlDataAdapter ad = new SqlDataAdapter(cmd);
             ad.Fill(planTable);
             ad.Dispose();
-            planHour = DateTime.Now - Convert.ToDateTime(planTable.Rows[0][0]);
+            //planHour = DateTime.Now - Convert.ToDateTime(planTable.Rows[0][0]);
+            if (planTable.Rows.Count!=0)
+            {
+                planHour = (DateTime.Now - Convert.ToDateTime(planTable.Rows[0][0])).TotalSeconds;
+            }
+            else
+            {
+                return 0;
+            }
             DataTable MesTable = new DataTable();
             cmd.CommandText = "select EventType,EventTime from wapMesEventRec where ResName = '" + curRes + "' and MesDate = '" + DateTime.Now.AddDays(0).ToShortDateString()+"'";
             SqlDataAdapter MesAd = new SqlDataAdapter(cmd);
             MesAd.Fill(MesTable);
-
+            MesAd.Dispose();
             cmd.Connection.Close();
-            TimeSpan MesHour = new TimeSpan(0);
+            if (MesTable.Rows.Count == 0)
+            {
+                return 0;
+            }
+            double MesHour = 0;
             for (int i = 0; i < MesTable.Rows.Count; i++)
             {
                 if (i!= MesTable.Rows.Count-1)
@@ -273,19 +310,26 @@ namespace WebApiNew.Model
                             //有效工时
                             if (Convert.ToBoolean(AppSetting.MapResTable.Rows[j][2]))
                             {
-                                if (MesHour == new TimeSpan(0))
+                                if (MesHour == 0)
                                 {
-                                    MesHour = Convert.ToDateTime(MesTable.Rows[i + 1][1]) - Convert.ToDateTime(MesTable.Rows[i][1]);
+                                    //MesHour = Convert.ToDateTime(MesTable.Rows[i + 1][1]) - Convert.ToDateTime(MesTable.Rows[i][1]);
+                                    MesHour = (Convert.ToDateTime(MesTable.Rows[i + 1][1]) - Convert.ToDateTime(MesTable.Rows[i][1])).TotalSeconds;
                                 }
                                 else
                                 {
-                                    MesHour += Convert.ToDateTime(MesTable.Rows[i + 1][1]) - Convert.ToDateTime(MesTable.Rows[i][1]);
+                                    //MesHour += Convert.ToDateTime(MesTable.Rows[i + 1][1]) - Convert.ToDateTime(MesTable.Rows[i][1]);
+                                    MesHour += (Convert.ToDateTime(MesTable.Rows[i + 1][1]) - Convert.ToDateTime(MesTable.Rows[i][1])).TotalSeconds;
                                 }
                             }
                         }
                     }
                 }
             }
+            if (MesHour==0|| planHour==0)
+            {
+                return 0;
+            }
+            decimal aaa = decimal.Round(Convert.ToDecimal(MesHour / planHour) * 100, 2);
             return decimal.Round(Convert.ToDecimal(MesHour / planHour) * 100, 2);
         }
         /// <summary>
@@ -385,6 +429,7 @@ namespace WebApiNew.Model
                 if (Convert.ToDateTime(row["ResCalStartTime"]) <= DateTime.Now && Convert.ToDateTime(row["ResCalEndTime"]) >=  DateTime.Now)
                 {
                     curdayshift = Convert.ToInt32(row["ResCalShift"]);
+                    break;
                 }
             }
             JObject data = new JObject
@@ -393,6 +438,12 @@ namespace WebApiNew.Model
                 { "dayShift",JsonConvert.SerializeObject(table)}
              };
             return data;
+        }
+        public DataTable ResEvent(string ResName)
+        {
+            DataTable table = new DataTable();
+
+            return table;
         }
     }
 }

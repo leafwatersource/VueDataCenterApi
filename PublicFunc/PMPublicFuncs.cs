@@ -37,13 +37,11 @@ namespace WebApiNew.PublicFunc
         public static string GetSafetyPass(string userName,string userPass)
         {
             MD5 md5 = MD5.Create();
-            //PMStaticModels.UserModels.PMUser.UserSysID
             userPass += userName;
             string Pass = "";
             byte[] s = md5.ComputeHash(Encoding.UTF8.GetBytes(userPass.Trim()));
             for (int i = 0; i < s.Length; i++)
             {
-                // 将得到的字符串使用十六进制类型格式。格式后的字符是小写的字母，如果使用大写（X）则格式后的字符是大写字符 
                 Pass += s[i].ToString("X");
             }
             return Pass;
