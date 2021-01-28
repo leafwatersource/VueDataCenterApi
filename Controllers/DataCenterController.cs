@@ -86,6 +86,7 @@ namespace WebApiNew.Controllers
     [ApiController]
     public class GetAllOP : ControllerBase
     {
+        [HttpPost]
         /// <summary>
         /// 根据传来的工单号码搜索工单下所有的工序的进度
         /// </summary>

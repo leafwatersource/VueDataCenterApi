@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Mr.Ye\\Desktop\\WebApiNew\\WebApiNew.csproj": {}
+    "C:\\Users\\Mr.Ye\\Desktop\\WebApiNew\\test\\VueDataCenterApi\\WebApiNew.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Mr.Ye\\Desktop\\WebApiNew\\WebApiNew.csproj": {
+    "C:\\Users\\Mr.Ye\\Desktop\\WebApiNew\\test\\VueDataCenterApi\\WebApiNew.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Mr.Ye\\Desktop\\WebApiNew\\WebApiNew.csproj",
+        "projectUniqueName": "C:\\Users\\Mr.Ye\\Desktop\\WebApiNew\\test\\VueDataCenterApi\\WebApiNew.csproj",
         "projectName": "WebApiNew",
-        "projectPath": "C:\\Users\\Mr.Ye\\Desktop\\WebApiNew\\WebApiNew.csproj",
+        "projectPath": "C:\\Users\\Mr.Ye\\Desktop\\WebApiNew\\test\\VueDataCenterApi\\WebApiNew.csproj",
         "packagesPath": "C:\\Users\\Mr.Ye\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Mr.Ye\\Desktop\\WebApiNew\\obj\\",
+        "outputPath": "C:\\Users\\Mr.Ye\\Desktop\\WebApiNew\\test\\VueDataCenterApi\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"

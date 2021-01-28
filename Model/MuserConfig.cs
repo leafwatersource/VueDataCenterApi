@@ -22,7 +22,7 @@ namespace WebApiNew.Model
             XmlDocument document = new XmlDocument();
             JObject targetChangeData = JObject.Parse(changeData);
             document.Load(AppSetting.BasePath + "appsettings.xml");
-            XmlNode TableFileConfig = document.SelectSingleNode("AppConfig").SelectSingleNode("TableFileds");//订单查询、执行计划、设备使用记录的列
+            XmlNode TableFileConfig = document.SelectSingleNode("AppConfig").SelectSingleNode("TableFileds");
             XmlElement TargetTable = (XmlElement)TableFileConfig.SelectSingleNode(tableName).SelectSingleNode("filedItem[@name='" + targetChange + "']");
             TargetTable.InnerText = targetChangeData.GetValue("showNameT").ToString();
             TargetTable.SetAttribute("name", targetChangeData["sqlNameT"].ToString());
@@ -40,7 +40,7 @@ namespace WebApiNew.Model
             AppSetting.TableFileds = new JObject();
             XmlDocument document = new XmlDocument();
             document.Load(AppSetting.BasePath + "appsettings.xml");
-            XmlNode TableFileConfig = document.SelectSingleNode("AppConfig").SelectSingleNode("TableFileds");//订单查询、执行计划、设备使用记录的列
+            XmlNode TableFileConfig = document.SelectSingleNode("AppConfig").SelectSingleNode("TableFileds");
             XmlNodeList TableFiledsConfigList = TableFileConfig.ChildNodes;
             List<JObject> temp;
             foreach (XmlNode item in TableFiledsConfigList)
@@ -94,13 +94,15 @@ namespace WebApiNew.Model
         {
             XmlDocument document = new XmlDocument();
             document.Load(AppSetting.BasePath + "appsettings.xml");
-            XmlNode TableFileConfig = document.SelectSingleNode("AppConfig").SelectSingleNode("TableFileds");//订单查询、执行计划、设备使用记录的列
+            XmlNode TableFileConfig = document.SelectSingleNode("AppConfig").SelectSingleNode("TableFileds");
             XmlNode TargetNode = TableFileConfig.SelectSingleNode(tableName);
             XmlElement filedItem = document.CreateElement("filedItem");
             JObject newColumn = JObject.Parse(newData);
             filedItem.SetAttribute("type", newColumn["type"].ToString());
             filedItem.SetAttribute("name", newColumn["sqlNameT"].ToString());
             filedItem.SetAttribute("width", newColumn["width"].ToString());
+            filedItem.SetAttribute("indexNameT", newColumn["indexNameT"].ToString());
+            filedItem.SetAttribute("filter","False");
             filedItem.InnerText = newColumn["showNameT"].ToString();
             TargetNode.AppendChild(filedItem);
             document.Save(AppSetting.BasePath + "appsettings.xml");
@@ -115,7 +117,7 @@ namespace WebApiNew.Model
         {
             XmlDocument document = new XmlDocument();
             document.Load(AppSetting.BasePath + "appsettings.xml");
-            XmlNode TableFileConfig = document.SelectSingleNode("AppConfig").SelectSingleNode("TableFileds");//订单查询、执行计划、设备使用记录的列
+            XmlNode TableFileConfig = document.SelectSingleNode("AppConfig").SelectSingleNode("TableFileds");
             XmlNode targetTable = TableFileConfig.SelectSingleNode(tableName);
             XmlElement targetRow = (XmlElement)targetTable.SelectSingleNode("filedItem[@name='" + delData + "']");
             targetTable.RemoveChild(targetRow);
@@ -124,10 +126,9 @@ namespace WebApiNew.Model
         }
         public void changeSwitchVal(string val)
         {
-
             XmlDocument document = new XmlDocument();
             document.Load(AppSetting.BasePath + "appsettings.xml");
-            XmlNode TableFileConfig = document.SelectSingleNode("AppConfig").SelectSingleNode("PMSettings");//订单查询、执行计划、设备使用记录的列
+            XmlNode TableFileConfig = document.SelectSingleNode("AppConfig").SelectSingleNode("PMSettings");
             XmlElement TargetEl = (XmlElement)TableFileConfig.SelectSingleNode("changePlan");
             TargetEl.InnerText = val;
             AppSetting.ChangePlan = Convert.ToBoolean(val);

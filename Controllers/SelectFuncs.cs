@@ -32,7 +32,7 @@ namespace WebApiNew.Controllers
     public class FunctionList : ControllerBase
     {
         /// <summary>
-        /// 查看用户的权限
+        /// 查看用户的权限5
         /// </summary>
         /// <returns></returns>
         [HttpPost]

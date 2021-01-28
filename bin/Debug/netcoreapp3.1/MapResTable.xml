@@ -17,12 +17,12 @@
     <COLUMN curEventType="E" nextEventType="D" effective="false" />
     <COLUMN curEventType="E" nextEventType="P" effective="false" />
     <COLUMN curEventType="E" nextEventType="U" effective="false" />
-    <COLUMN curEventType="E" nextEventType="R" effective="true" />
+    <COLUMN curEventType="E" nextEventType="R" effective="false" />
     <COLUMN curEventType="E" nextEventType="C" effective="false" />
     <COLUMN curEventType="E" nextEventType="EW" effective="false" />
     <COLUMN curEventType="E" nextEventType="RN" effective="false" />
     <COLUMN curEventType="S" nextEventType="RD" effective="false" />
-    <COLUMN curEventType="S" nextEventType="E" effective="true" />
+    <COLUMN curEventType="S" nextEventType="E" effective="false" />
     <COLUMN curEventType="S" nextEventType="S" effective="false" />
     <COLUMN curEventType="S" nextEventType="D" effective="false" />
     <COLUMN curEventType="S" nextEventType="P" effective="false" />
@@ -33,7 +33,7 @@
     <COLUMN curEventType="S" nextEventType="RN" effective="false" />
     <COLUMN curEventType="D" nextEventType="RD" effective="false" />
     <COLUMN curEventType="D" nextEventType="E" effective="false" />
-    <COLUMN curEventType="D" nextEventType="S" effective="true" />
+    <COLUMN curEventType="D" nextEventType="S" effective="false" />
     <COLUMN curEventType="D" nextEventType="D" effective="false" />
     <COLUMN curEventType="D" nextEventType="P" effective="false" />
     <COLUMN curEventType="D" nextEventType="U" effective="false" />
@@ -67,7 +67,7 @@
     <COLUMN curEventType="R" nextEventType="D" effective="false" />
     <COLUMN curEventType="R" nextEventType="P" effective="false" />
     <COLUMN curEventType="R" nextEventType="U" effective="false" />
-    <COLUMN curEventType="R" nextEventType="R" effective="true" />
+    <COLUMN curEventType="R" nextEventType="R" effective="false" />
     <COLUMN curEventType="R" nextEventType="C" effective="false" />
     <COLUMN curEventType="R" nextEventType="EW" effective="false" />
     <COLUMN curEventType="R" nextEventType="RN" effective="false" />

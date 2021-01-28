@@ -12,7 +12,7 @@
   </PMSettings>
   <TableFileds>
     <SQLWorkOrderFiled data="订单查询页面的表格的列" widthName="宽度">
-      <filedItem type="string" name="jobFinished" width="120" filter="False" indexNameT="1">生产状态</filedItem>
+      <filedItem type="string" name="jobFinished" width="120" filter="True" indexNameT="1">生产状态</filedItem>
       <filedItem type="string" name="finishedRatio" width="150" filter="true" indexNameT="11">完成比例</filedItem>
       <filedItem type="string" name="workID" width="150" filter="true" indexNameT="3">工单号码</filedItem>
       <filedItem type="string" name="productID" width="150" filter="true" indexNameT="4">产品名称</filedItem>
@@ -28,7 +28,7 @@
       <filedItem type="string" name="itemWorkID" width="150" filter="true" indexNameT="1">工单</filedItem>
       <filedItem type="string" name="ProductID" width="150" filter="true" indexNameT="2">产品</filedItem>
       <filedItem type="string" name="allQuantity" width="60" filter="true" indexNameT="3">工单总数</filedItem>
-      <filedItem type="string" name="quantity" width="50" filter="true" indexNameT="4">排程数</filedItem>
+      <filedItem type="string" name="quantity" width="50" filter="true" indexNameT="4" >排程数</filedItem>
       <filedItem type="string" name="jobFinishedQty" width="50" filter="true" indexNameT="5">总完成数</filedItem>
       <filedItem type="date" name="firstDemandDay" width="100" filter="true" indexNameT="6">需求日期</filedItem>
       <filedItem type="string" name="finishStatus" width="50" filter="true" indexNameT="7">完成状态</filedItem>
@@ -45,18 +45,16 @@
       <filedItem type="string" name="Lock" width="50" filter="true" indexNameT="18">锁定</filedItem>
     </SQLWorkPlanFiled>
     <HistoryTableFiled data="事件记录页面要展示的列" widthName="宽度">
-      <filedItem name="pmResName" type="string" width="150" filter="False" indexNameT="2">计划设备</filedItem>
-      <filedItem name="mesOpName" type="string" width="150" filter="False" indexNameT="4">工序名称</filedItem>
-      <filedItem name="workID" type="string" width="150" filter="False" indexNameT="1">工单</filedItem>
-      <filedItem name="productID" type="string" width="150" filter="False" indexNameT="6">产品名称</filedItem>
-      <filedItem name="finishedQty" type="string" width="150" filter="False" indexNameT="10">完成数</filedItem>
-      <filedItem name="dayShift" type="string" width="80" filter="False" indexNameT="7">班次</filedItem>
-      <filedItem type="string" name="mesResName" width="120" indexNameT="3" filter="False">实际设备</filedItem>
-      <filedItem type="string" name="bgPerson" width="100" indexNameT="9" filter="True">报工人</filedItem>
-      <filedItem type="string" name="failQty" width="100" indexNameT="11" filter="False">不良数</filedItem>
-      <filedItem type="string" name="TaskFinishState" width="120" indexNameT="11" filter="False">完成状态</filedItem>
-      <filedItem type="date" name="dailyDate" width="150" indexNameT="12" filter="True">日期</filedItem>
-      <filedItem type="string" name="opIndex" width="120" indexNameT="5" filter="False">工序顺序</filedItem>
+      <filedItem name="mesResName" type="string" width="150" filter="true" indexNameT="1">设备名称</filedItem>
+      <filedItem name="mesOpName" type="string" width="150" filter="true" indexNameT="2">工序名称</filedItem>
+      <filedItem name="workID" type="string" width="150" filter="true" indexNameT="3">工单</filedItem>
+      <filedItem name="productID" type="string" width="150" filter="true" indexNameT="4">产品名称</filedItem>
+      <filedItem name="finishedQty" type="string" width="150" filter="true" indexNameT="5">完成数</filedItem>
+      <filedItem name="unFinishQty" type="string" width="150" filter="true" indexNameT="6">未完成数</filedItem>
+      <filedItem name="dayShift" type="string" width="150" filter="true" indexNameT="7">班次</filedItem>
+      <filedItem name="UID" type="string" width="150" filter="true" indexNameT="7">UID</filedItem>
+      <filedItem name="itemAttr1" type="string" width="150" filter="true" indexNameT="8">属性1</filedItem>
+      <filedItem name="itemAttr2" type="string" width="150" filter="true" indexNameT="9">属性2</filedItem>
     </HistoryTableFiled>
   </TableFileds>
   <Statistics data="前端鼠标hover的时候出现的字段" widthName="宽度">

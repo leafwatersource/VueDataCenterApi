@@ -15,12 +15,16 @@ namespace WebApiNew.Controllers
         /// <summary>
         /// 分页展示用户的操作记录
         /// </summary>
+        /// <param name="PageSize">一页多少数据</param>
+        /// <param name="CurPage">当前为多少页</param>
+        /// <param name="filter">精确筛选</param>
+        /// <param name="fuzzyFilter">模糊筛选</param>
         /// <returns></returns>
         [HttpPost]
-        public IActionResult Resul([FromForm] string PageSize, [FromForm] string CurPage, [FromForm] string filter)
+        public IActionResult Resul([FromForm] string PageSize, [FromForm] string CurPage, [FromForm] string filter,[FromForm]string fuzzyFilter)
         {
             MHistory mHistory = new MHistory();
-            return Ok(mHistory.GetUserLog(PageSize, CurPage, filter).ToString());
+            return Ok(mHistory.GetUserLog(PageSize, CurPage, filter, fuzzyFilter).ToString());
         }
     }
 }
